@@ -3,83 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOKIM | Glass Edition</title>
+    <title>NOKIM | Official</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
-            height: 100vh;
+            background-color: #0e0e0e; /* تم تیره و حرفه‌ای */
+            color: #ffffff;
+            font-family: 'Segoe UI', Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #e0e0e0, #ffffff); /* پس‌زمینه ملایم برای بهتر دیده شدن اثر شیشه */
+            height: 100vh;
             overflow: hidden;
-            font-family: 'Segoe UI', sans-serif;
         }
 
-        .glass-container {
-            position: relative;
-        }
-
-        .nokim-text {
-            font-size: 15vw;
-            font-weight: 900;
+        /* کلمه NOKIM با افکت شیشه‌ای و بازتاب نور */
+        .brand-name {
+            font-size: 10vw;
+            font-weight: 800;
             text-transform: uppercase;
-            position: relative;
-            
-            /* ایجاد حالت شیشه‌ای و شفاف */
-            color: rgba(255, 255, 255, 0.3);
-            
-            /* ایجاد عمق با سایه (حالت برجستگی) */
-            text-shadow: 
-                2px 2px 10px rgba(0, 0, 0, 0.1),
-                -1px -1px 5px rgba(255, 255, 255, 0.8);
-
-            /* ایجاد لایه بازتاب نور (Gradient) */
-            background: linear-gradient(
-                to right, 
-                rgba(255,255,255,0) 0%, 
-                rgba(255,255,255,0.8) 50%, 
-                rgba(255,255,255,0) 100%
-            );
-            background-size: 200% auto;
+            letter-spacing: 0.05em;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.1) 100%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            
-            /* انیمیشن حرکت نور */
-            animation: shine 4s linear infinite;
+            background-clip: text;
+            color: transparent;
+            animation: shine 5s infinite;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+            margin-bottom: 20px;
         }
 
-        /* انیمیشن برای حرکت نور روی متن */
         @keyframes shine {
-            to {
-                background-position: 200% center;
-            }
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
         }
 
-        /* اضافه کردن یک لایه مات پشت متن برای حس شیشه‌ای بیشتر */
-        .glass-effect {
+        .subtitle {
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            color: #888;
+            margin-top: -10px;
+        }
+
+        footer {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 110%;
-            height: 120%;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px); /* مات کردن پشت متن */
-            border-radius: 20px;
-            z-index: -1;
-            pointer-events: none;
+            bottom: 30px;
+            font-size: 0.9rem;
+            color: #444;
         }
     </style>
 </head>
 <body>
 
-    <div class="glass-container">
-        <div class="glass-effect"></div>
-        <h1 class="nokim-text">NOKIM</h1>
-    </div>
+    <h1 class="brand-name">NOKIM</h1>
+    <div class="subtitle">DEVELOPMENT & INNOVATION</div>
+
+    <footer>© 2026 NOKIM Corporation. All rights reserved.</footer>
 
 </body>
 </html>
-
