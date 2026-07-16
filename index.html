@@ -3,29 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOKIM | صفحه اصلی</title>
+    <title>NOKIM Explorer</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; color: #333; }
-        nav { display: flex; align-items: center; padding: 15px 50px; border-bottom: 1px solid #ccc; }
-        .logo { font-weight: bold; font-size: 24px; margin-right: 20px; }
-        .hero { text-align: center; padding: 60px 20px; background: #f2f2f2; }
-        .hero h1 { font-size: 48px; }
-        .btn { display: inline-block; padding: 10px 25px; background: #0067b8; color: white; text-decoration: none; border-radius: 2px; }
-        .btn:hover { background: #005da6; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background-color: #ffffff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* متن بزرگ شفاف در پس‌زمینه */
+        .background-text {
+            position: absolute;
+            font-size: 25vw; /* نسبت به عرض صفحه بزرگ می‌شود */
+            font-weight: 900;
+            color: rgba(0, 0, 0, 0.05); /* شفافیت خیلی کم */
+            z-index: 0;
+            pointer-events: none; /* اجازه می‌دهد روی آن کلیک شود */
+            user-select: none;
+        }
+
+        /* محتوای اصلی */
+        .content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        h1 { font-size: 3rem; color: #333; margin-bottom: 20px; }
+        .btn { 
+            padding: 12px 30px; 
+            background: #000; 
+            color: #fff; 
+            text-decoration: none; 
+            border-radius: 4px;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">NOKIM</div>
-    </nav>
+    <div class="background-text">NOKIM</div>
 
-    <header class="hero">
-        <h1>به دنیای NOKIM خوش آمدید</h1>
-        <p>تجربه‌ای متفاوت از فناوری و اکتشاف.</p>
-        <br>
-        <a href="#" class="btn">ورود به NOKIM Explorer</a>
-    </header>
+    <div class="content">
+        <h1>به NOKIM Explorer خوش آمدید</h1>
+        <p>در حال آماده‌سازی برای سفری تازه...</p>
+        <br><br>
+        <a href="#" class="btn">ورود به اکسپلورر</a>
+    </div>
 
 </body>
 </html>
+
