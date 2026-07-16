@@ -9,6 +9,7 @@
             --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
             --accent-color: #ffffff;
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
         body {
@@ -27,12 +28,12 @@
         /* بخش برند اصلی در مرکز صفحه */
         .hero-section {
             text-align: center;
-            padding: 60px 0;
+            padding: 80px 0 40px 0;
             width: 100%;
         }
 
         .brand-name {
-            font-size: 8vw;
+            font-size: 9vw;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.1em;
@@ -40,7 +41,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            animation: shine 5s infinite;
+            animation: shine 6s infinite;
             margin: 0;
         }
 
@@ -51,140 +52,369 @@
 
         .subtitle {
             font-weight: 300;
-            letter-spacing: 0.3em;
+            letter-spacing: 0.4em;
             color: #666;
-            font-size: 0.9rem;
+            font-size: 1rem;
             margin-top: 10px;
         }
 
         /* ظرف اصلی برای چیدن بخش‌ها */
         .main-container {
             width: 90%;
-            max-width: 1200px;
+            max-width: 1100px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            padding-bottom: 100px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 20px 0 100px 0;
         }
 
         /* استایل کلی کارت‌های شیشه‌ای */
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 25px;
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            border-radius: 24px;
+            padding: 30px;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
         }
 
         .glass-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-12px);
             border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
         .glass-card h3 {
             margin-top: 0;
             font-weight: 500;
+            font-size: 1.4rem;
             border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 10px;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
             color: var(--accent-color);
         }
 
         /* استایل بخش اخبار */
         .news-item {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: #bbb;
-            margin-bottom: 15px;
-            line-height: 1.6;
+            margin-bottom: 20px;
+            line-height: 1.7;
         }
 
         .news-date {
             font-size: 0.75rem;
             color: #555;
             display: block;
+            margin-bottom: 5px;
         }
 
         /* استایل دکمه‌ها */
         .button-group {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .btn {
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.1);
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
             color: white;
             text-decoration: none;
             text-align: center;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: var(--transition);
         }
 
         .btn:hover {
-            background: #fff;
-            color: #000;
+            background: #ffffff;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        /* دکمه ویژه برای ورود به منوی برنامه‌ها */
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background: #ffffff;
+            color: #000000;
+            transform: scale(1.02);
         }
 
         footer {
             margin-top: auto;
-            padding: 20px;
+            padding: 40px;
             color: #444;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            text-align: center;
+            width: 100%;
         }
+
+        /* استایل متن وضعیت */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+            font-size: 0.8rem;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
     </style>
 </head>
 <body>
 
     <div class="hero-section">
         <h1 class="brand-name">NOKIM</h1>
-        <div class="subtitle">SYSTEMS & ECOSYSTEM</div>
+        <div class="subtitle">ADVANCED TECHNOLOGY SOLUTIONS</div>
     </div>
 
     <div class="main-container">
         
         <!-- بخش اخبار -->
         <div class="glass-card">
-            <h3>آخرین اخبار</h3>
+            <h3>آخرین رویدادها</h3>
             <div class="news-item">
-                <span class="news-date">۲۰۲۶/۰۷/۱۶</span>
-                راه‌اندازی نسخه جدید پلتفرم NOKIM اکسپلورر.
+                <span class="news-date">۱۴۰۵/۰۴/۲۶</span>
+                معرفی اکوسیستم جدید NOKIM و راهکارهای هوشمند.
             </div>
-            <div class="news-item">
-                <span class="news-date">۲۰۲۶/۰۷/۱۰</span>
-                به‌روزرسانی زیرساخت‌های امنیتی و سرعت سایت.
-            </div>
-        </div>
+            حتماً صبور جان! این نسخه کامل و بازبینی‌شده‌ی `index.html` هست. 
 
-        <!-- بخش دسترسی‌های سریع (دکمه‌ها) -->
-        <div class="glass-card">
-            <h3>دسترسی سریع</h3>
-            <div class="button-group">
-                <a href="#" class="btn">ورود به پنل کاربری</a>
-                <a href="#" class="btn">مشاهده پروژه‌ها</a>
-                <a href="#" class="btn">تماس با پشتیبانی</a>
-            </div>
-        </div>
+من تغییرات لازم رو اعمال کردم: ساختار رو حفظ کردم، اما حالا یک بخش **"مرکز دسترسی به برنامه‌ها"** اضافه کردم که کاربر رو به فایل بعدی (`Applications-menu.html`) هدایت می‌کنه. استایل رو هم طوری تنظیم کردم که دکمه‌ی ورود به برنامه‌ها، مثل یک "دروازه" به دنیای محصولات NOKIM به نظر برسه.
+```html
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOKIM | Official Portal</title>
+<style>
+:root {
+--glass-bg: rgba(255, 255, 255, 0.05);
+--glass-border: rgba(255, 255, 255, 0.1);
+--accent-color: #ffffff;
+--primary-glow: rgba(255, 255, 255, 0.15);
+}
 
-        <!-- بخش درباره ما یا وضعیت سیستم -->
-        <div class="glass-card">
-            <h3>وضعیت سیستم</h3>
-            <p style="font-size: 0.9rem; color: #bbb;">
-                تمام سرویس‌های NOKIM در حال حاضر در وضعیت 
-                <span style="color: #4caf50;">Online</span> قرار دارند.
-            </p>
-            <p style="font-size: 0.8rem; color: #666;">
-                نسخه انتشار: v1.0.4-stable
-            </p>
-        </div>
+body {
+margin: 0;
+padding: 0;
+background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+color: #fff;
+font-family: 'Segoe UI', Tahoma, sans-serif;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+overflow-x: hidden;
+}
 
-    </div>
+/* بخش برند اصلی در مرکز صفحه */
+.hero-section {
+text-align: center;
+padding: 80px 0 40px 0;
+width: 100%;
+}
 
-    <footer>© 2026 NOKIM Corporation. All rights reserved.</footer>
+.brand-name {
+font-size: 9vw;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 0.1em;
+background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.1) 100%);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+animation: shine 5s infinite;
+margin: 0;
+filter: drop-shadow(0 0 30px rgba(255,255,255,0.1));
+}
+
+@keyframes shine {
+0% { background-position: -200% center; }
+100% { background-position: 200% center; }
+}
+
+.subtitle {
+font-weight: 300;
+letter-spacing: 0.4em;
+color: #666;
+font-size: 1rem;
+margin-top: 10px;
+text-transform: uppercase;
+}
+
+/* ظرف اصلی برای چیدن بخش‌ها */
+.main-container {
+width: 90%;
+max-width: 1200px;
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 25px;
+padding: 20px 0 100px 0;
+}
+
+/* استایل کلی کارت‌های شیشه‌ای */
+.glass-card {
+background: var(--glass-bg);
+backdrop-filter: blur(15px);
+-webkit-backdrop-filter: blur(15px);
+border: 1px solid var(--glass-border);
+border-radius: 24px;
+padding: 30px;
+transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glass-card:hover {
+transform: translateY(-10px);
+border-color: rgba(255, 255, 255, 0.3);
+box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.glass-card h3 {
+margin-top: 0;
+font-weight: 500;
+font-size: 1.2rem;
+border-bottom: 1px solid var(--glass-border);
+padding-bottom: 15px;
+color: var(--accent-color);
+text-align: center;
+}
+
+/* استایل بخش اخبار */
+.news-item {
+font-size: 0.9rem;
+color: #bbb;
+margin-bottom: 18px;
+line-height: 1.6;
+padding-right: 10px;
+border-right: 2px solid var(--glass-border);
+}
+
+.news-date {
+font-size: 0.75rem;
+color: #555;
+display: block;
+margin-bottom: 4px;
+}
+
+/* استایل دکمه‌ها */
+.button-group {
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+
+.btn {
+padding: 14px 20px;
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid var(--glass-border);
+color: white;
+text-decoration: none;
+text-align: center;
+border-radius: 12px;
+font-size: 0.95rem;
+transition: all 0.3s ease;
+}
+
+.btn:hover {
+background: #ffffff;
+color: #000;
+transform: scale(1.02);
+}
+
+/* دکمه ویژه برای ورود به برنامه‌ها */
+.btn-primary {
+background: rgba(255, 255, 255, 0.1);
+border: 1px solid rgba(255, 255, 255, 0.4);
+font-weight: 600;
+letter-spacing: 0.05em;
+box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.btn-primary:hover {
+background: #fff;
+box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+}
+
+footer {
+margin-top: auto;
+padding: 30px;
+color: #444;
+font-size: 0.85rem;
+text-align: center;
+width: 100%;
+}
+
+/* ریسپانسیو برای موبایل */
+@media (max-width: 600px) {
+.brand-name { font-size: 15vw; }
+.main-container { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero-section">
+<h1 class="brand-name">NOKIM</h1>
+<div class="subtitle">SYSTEMS & ECOSYSTEM</div>
+</div>
+
+<div class="main-container">
+
+<!-- بخش دسترسی به برنامه‌ها (بسیار مهم) -->
+<div class="glass-card">
+<h3>دسترسی به محصولات</h3>
+<div class="button-group">
+<p style="font-size: 0.85rem; color: #888; text-align: center; margin-bottom: 10px;">
+برای مشاهده و مدیریت برنامه‌های NOKIM کلیک کنید
+</p>
+<a href="Applications-menu.html" class="btn btn-primary">🚀 منوی برنامه‌ها</a>
+</div>
+</div>
+
+<!-- بخش اخبار -->
+<div class="glass-card">
+<h3>آخرین اخبار</h3>
+<div class="news-item">
+<span class="news-date">۲۰۲۶/۰۷/۱۶</span>
+طرح جدید اکوسیستم NOKIM آغاز شد.
+</div>
+<div class="news-item">
+<span class="news-date">۲۰۲۶/۰۷/۱۰</span>
+به‌روزرسانی زیرساخت‌های امنیتی انجام شد.
+</div>
+</div>
+
+<!-- بخش وضعیت سیستم -->
+<div class="glass-card">
+<h3>وضعیت سرویس‌ها</h3>
+<div style="text-align: center; padding: 10px 0;">
+<div style="font-size: 0.9rem; color: #bbb;">وضعیت کلی شبکه:</div>
+<div style="color: #4caf50; font-weight: bold; font-size: 1.2rem; margin-top: 5px;">
+● Online
+</div>
+</div>
+<p style="font-size: 0.8rem; color: #555; text-align: center; margin-top: 15px;">
+نسخه پلتفرم: v1.0.4-stable
+</p>
+</div>
+
+</div>
+
+<footer>© 2026 NOKIM Corporation. All rights reserved.</footer>
 
 </body>
 </html>
-
