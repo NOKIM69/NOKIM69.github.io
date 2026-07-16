@@ -3,216 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOKIM | Applications Menu</title>
+    <title>مرکز مدیریت برنامه‌ها | NOKIM Explorer</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Vazirmatn is great for Persian) -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --accent-color: #ffffff;
-            --text-secondary: #aaa;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent-color: #00d2ff;
+            --text-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at top left, #1a1a2e, #16213e, #0f3460);
+            background-attachment: fixed;
+            color: var(--text-color);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding-bottom: 50px;
         }
 
-        /* هدر صفحه منو */
+        /* Header & Search Section */
         header {
-            width: 100%;
-            padding: 60px 0 40px 0;
+            padding: 40px 20px;
             text-align: center;
+            backdrop-filter: blur(10px);
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 40px;
         }
 
         header h1 {
             font-size: 2.5rem;
-            letter-spacing: 2px;
-            margin: 0;
-            background: linear-gradient(to bottom, #fff, #666);
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        header p {
-            color: var(--text-secondary);
-            margin-top: 10px;
-            font-size: 1rem;
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
         }
 
-        /* دکمه بازگشت به خانه */
-        .back-home {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            text-decoration: none;
-            color: #fff;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            backdrop-filter: blur(10px);
+        .search-container input {
+            width: 100%;
+            padding: 15px 45px 15px 20px;
+            border-radius: 30px;
             border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            outline: none;
             transition: 0.3s;
-            z-index: 100;
         }
 
-        .back-home:hover {
-            background: #fff;
-            color: #000;
+        .search-container input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
         }
 
-        /* شبکه کارت‌های برنامه */
+        .search-container i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-color);
+        }
+
+        /* Main Content Grid */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
         .apps-grid {
-            width: 90%;
-            max-width: 1100px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            padding: 20px 0 80px 0;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
         }
 
-        /* استایل کارت برنامه */
+        /* Product Card Styling */
         .app-card {
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
-            border-radius: 30px;
-            padding: 40px 30px;
-            text-align: center;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            position: relative;
-            overflow: hidden;
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             flex-direction: column;
-            align-items: center;
-        }
-
-        /* افکت نوری پشت کارت */
-        .app-card::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
-            pointer-events: none;
+            position: relative;
+            overflow: hidden;
         }
 
         .app-card:hover {
             transform: translateY(-10px);
-            border-color: rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.07);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            border-color: var(--accent-color);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
         }
 
-        /* آیکون یا تصویر برنامه */
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .app-card:hover::before {
+            left: 100%;
+        }
+
         .app-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #333, #111);
-            border-radius: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            text-align: center;
         }
 
-        .app-card h2 {
-            margin: 10px 0;
-            font-size: 1.5rem;
-            font-weight: 500;
+        .app-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
         }
 
-        .app-card p {
-            color: var(--text-secondary);
+        .app-desc {
             font-size: 0.9rem;
+            color: #ccc;
+            text-align: center;
+            margin-bottom: 20px;
             line-height: 1.6;
-            margin-bottom: 25px;
-            height: 45px; /* برای یکدست بودن کارت‌ها */
-            overflow: hidden;
         }
 
-        /* دکمه ورود به برنامه */
-        .btn-open {
-            text-decoration: none;
-            color: #000;
-            background: #fff;
-            padding: 12px 35px;
+        /* Specs Section (Soft98 Style) */
+        .app-specs {
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 5px;
+        }
+
+        .spec-item:last-child { border-bottom: none; }
+
+        .spec-label { color: #888; }
+        .spec-value { color: #eee; font-weight: bold; }
+
+        /* Action Button */
+        .btn-details {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
             transition: 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: block;
         }
 
-        .btn-open:hover {
-            background: #ddd;
-            transform: scale(1.05);
+        .btn-details:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
         }
 
-        /* انیمیشن ورود */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            .apps-grid { grid-template-columns: 1fr; }
         }
-
-        .app-card {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        /* دکمه‌های نمونه برای نمایش */
-        .app-card:nth-child(1) { animation-delay: 0.1s; }
-        .app-card:nth-child(2) { animation-delay: 0.2s; }
-        .app-card:nth-child(3) { animation-delay: 0.3s; }
-
     </style>
 </head>
 <body>
 
-    <a href="index.html" class="back-home">← بازگشت به خانه</a>
-
     <header>
-        <h1>برنامه‌های NOKIM</h1>
-        <p>انتخاب کنید تا وارد دنیای ابزارهای هوشمند شوید</p>
+        <h1>کاتالوگ ابزارها و برنامه‌ها</h1>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="جستجو در میان برنامه‌ها...">
+        </div>
     </header>
 
-    <div class="apps-grid">
-        
-        <!-- برنامه اول: NOKIM Explorer -->
-        <div class="app-card">
-            <div class="app-icon">📂</div>
-            <h2>NOKIM Explorer</h2>
-            <p>ابزار مدیریت فایل و جستجوی پیشرفته با رابط کاربری مدرن.</p>
-            <a href="NOKIM-Explorer.html" class="btn-open">مشاهده و اجرا</a>
-        </div>
+    <div class="container">
+        <div class="apps-grid">
+            
+            <!-- Card 1: NOKIM Explorer (Your Browser) -->
+            <div class="app-card">
+                <div class="app-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div class="app-title">NOKIM Explorer</div>
+                <div class="app-desc">مرورگر وب پیشرفته با قابلیت مدیریت دانلود و امنیت بالا.</div>
+                
+                <div class="app-specs">
+                    <div class="spec-item">
+                        <span class="spec-label">نسخه:</span>
+                        <span class="spec-value">1.0.0 Alpha</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">حجم:</span>
+                        <span class="spec-value">45 MB</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">تاریخ:</span>
+                        <span class="spec-value">۲۰۲۶/۰۷/۱۶</span>
+                    </div>
+                </div>
 
-        <!-- برنامه دوم (نمونه برای آینده) -->
-        <div class="app-card">
-            <div class="app-icon">🛠️</div>
-            <h2>NOKIM DevTools</h2>
-            <p>مجموعه‌ای از ابزارهای توسعه‌دهندگان برای تسریع در پروژه‌ها.</p>
-            <a href="#" class="btn-open" style="opacity: 0.5; cursor: not-allowed;">به‌زودی...</a>
-        </div>
+                <a href="NOKIM-Explorer.html" class="btn-details">مشاهده جزئیات و دانلود</a>
+            </div>
 
-        <!-- برنامه سوم (نمونه برای آینده) -->
-        <div class="app-card">
-            <div class="app-icon">🛡️</div>
-            <h2>NOKIM Security</h2>
-            <p>سیستم مانیتورینگ و امنیت اکوسیستم شما.</p>
-            <a href="#" class="btn-open" style="opacity: 0.5; cursor: not-allowed;">به‌زودی...</a>
-        </div>
+            <!-- Card 2: Placeholder for next tool -->
+            <div class="app-card" style="opacity: 0.6;">
+                <div class="app-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="app-title">ابزار آینده</div>
+                <div class="app-desc">به زودی در حال توسعه... منتظر برنامه‌های جذاب بعدی باشید.</div>
+                
+                <div class="app-specs">
+                    <div class="spec-item">
+                        <span class="spec-label">وضعیت:</span>
+                        <span class="spec-value" style="color: orange;">در حال ساخت</span>
+                    </div>
+                </div>
 
+                <button class="btn-details" style="background: #555; cursor: not-allowed;">Coming Soon</button>
+            </div>
+
+            <!-- You can add more cards here following the same structure -->
+
+        </div>
     </div>
 
 </body>
