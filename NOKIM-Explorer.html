@@ -1,149 +1,173 @@
-<!-- Download Section -->
-<section id="download" class="download-section">
-    <div class="container">
-        <h2 class="section-title">Get <span class="highlight">Nokim Explorer</span></h2>
-        <p class="section-subtitle">Download the latest Alpha version and experience next-gen security.</p>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOKIM Explorer | Fast & Secure Browser</title>
+    <style>
+        /* استایل‌های پایه و پس‌زمینه */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
 
-        <div class="download-card">
-            <!-- File Information Grid (Inspired by P30Download) -->
-            <div class="file-info-grid">
-                <div class="info-item">
-                    <span class="info-label">Version</span>
-                    <span class="info-value">1.0 Alpha</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">File Size</span>
-                    <span class="info-value">149 MB</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Platform</span>
-                    <span class="info-value">Windows x64</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Format</span>
-                    <span class="info-value">RAR / EXE</span>
-                </div>
-            </div>
+        /* افکت Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
 
-            <!-- Main Download Button -->
-            <div class="download-action">
-                <a href="https://drive.google.com/uc?export=download&id=1PSRr6AUHOta3XckQoa2wyz2x1dNkcyJ2" class="btn-main-download">
-                    <i class="fas fa-download"></i> Download via Google Drive
-                </a>
-            </div>
+        /* کانتینر اصلی */
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            text-align: center;
+        }
 
-            <!-- Warning Box (Google Drive Disclaimer) -->
-            <div class="download-warning">
-                <i class="fas fa-exclamation-triangle"></i>
-                <p>
-                    <strong>Note:</strong> Due to file size (149MB), Google Drive may not be able to scan this file for viruses. 
-                    Please ensure you trust the source.
-                </p>
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #a2a2a2;
+            margin-bottom: 40px;
+        }
+
+        /* بخش ویژگی‌ها */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .feature-item {
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-item i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* دکمه دانلود شیک */
+        .download-btn {
+            display: inline-block;
+            padding: 18px 45px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            background: rgba(79, 172, 254, 0.2);
+            border: 1px solid rgba(79, 172, 254, 0.5);
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+            margin-top: 20px;
+        }
+
+        .download-btn:hover {
+            background: rgba(79, 172, 254, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(79, 172, 254, 0.6);
+        }
+
+        /* بخش هشدار (Notice) */
+        .notice-box {
+            margin-top: 40px;
+            padding: 15px;
+            font-size: 0.9rem;
+            color: #ffcc00;
+            background: rgba(255, 204, 0, 0.1);
+            border-radius: 10px;
+            border: 1px dashed rgba(255, 204, 0, 0.3);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 30px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        /* انیمیشن ورود */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            animation: fadeInUp 1s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container glass-card">
+        <header>
+            <h1>NOKIM Explorer</h1>
+            <p class="subtitle">مرورگری فراتر از مرزها؛ سریع، امن و مدرن</p>
+        </header>
+
+        <section class="features">
+            <div class="feature-item">
+                <span>🚀</span>
+                <h3>سرعت بی‌نظیر</h3>
+                <p>بهینه‌سازی شده با آخرین تکنولوژی‌های روز.</p>
             </div>
-        </div>
+            <div class="feature-item">
+                <span>🛡️</span>
+                <h3>امنیت بالا</h3>
+                <p>تمرکز ویژه بر محافظت از حریم خصوصی شما.</p>
+            </div>
+            <div class="feature-item">
+                <span>💎</span>
+                <h3>طراحی مدرن</h3>
+                <p>رابط کاربری زیبا با تجربه کاربری روان.</p>
+            </div>
+        </section>
+
+        <section class="download-section">
+            <a href="https://drive.google.com/uc?export=download&id=1PSRr6AUHOta3XckQoa2wyz2x1dNkcyJ2" class="download-btn">
+                📥 دانلود نسخه V1.0 (Win64)
+            </a>
+            
+            <div class="notice-box">
+                <strong>نکته مهم:</strong> به دلیل حجم بالای فایل (۱۴۹ مگابایت)، ممکن است گوگل درایو امکان اسکن ویروس را اعلام نکند. این یک فرآیند عادی است و جای نگرانی نیست.
+            </div>
+        </section>
     </div>
-</section>
 
-<style>
-/* CSS برای پنل دانلود جدید - این را به بخش <style> اضافه کن */
+    <footer>
+        (C) 2026 NOKIM All rights reserved <br>
+        Developed by Daniyal Bahrami (NOKIM69)
+    </footer>
 
-.download-section {
-    padding: 80px 20px;
-    text-align: center;
-}
+</body>
+</html>
 
-.download-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 40px;
-    max-width: 700px;
-    margin: 40px auto;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-
-.file-info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
-    padding-bottom: 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.info-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.info-label {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 5px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.info-value {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #fff;
-}
-
-.btn-main-download {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
-    color: white;
-    padding: 16px 40px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3);
-}
-
-.btn-main-download:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(0, 210, 255, 0.5);
-}
-
-.download-warning {
-    margin-top: 30px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background: rgba(255, 166, 0, 0.1);
-    border-left: 4px solid #ffa600;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: left;
-}
-
-.download-warning i {
-    color: #ffa600;
-    margin-top: 3px;
-}
-
-.download-warning p {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
-    line-height: 1.4;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 480px) {
-    .file-info-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-    .download-card {
-        padding: 25px;
-    }
-}
-</style>
