@@ -163,7 +163,7 @@
       </div>
       <div class="search-buttons">
         <input type="submit" value="جستجوی Nokim">
-        <input type="submit" name="btnI" value="یا بخت و یا اقبال">
+        <input type="submit" name="btnI" value="موتور">
       </div>
     </form>
   </div>
@@ -181,14 +181,7 @@
 <div class="footer">
   <div class="footer-left">
     <a href="#">درباره</a>
-    <a href="#">تبلیغ</a>
-    <a href="#">تجارت</a>
-    <a href="#">نحوه عملکرد جستجو</a>
-  </div>
-  <div class="footer-right">
-    <a href="#">حریم خصوصی</a>
-    <a href="#">شرایط</a>
-    <a href="#">تنظیمات</a>
+   
   </div>
 </div>
 
@@ -199,7 +192,7 @@ const translations = {
     title: "Nokim Explorer",
     searchPlaceholder: "Search...",
     searchBtn: "Nokim Search",
-    luckyBtn: "I'm Feeling Lucky",
+    luckyBtn: "Applications",
     langLabel: "Nokim Explorer is offered in:",
     gmail: "Gmail",
     images: "Images",
@@ -215,7 +208,7 @@ const translations = {
     title: "Nokim Explorer",
     searchPlaceholder: "Поиск...",
     searchBtn: "Поиск Nokim",
-    luckyBtn: "Мне повезёт",
+    luckyBtn: "Applications",
     langLabel: "Nokim Explorer предлагается на:",
     gmail: "Gmail",
     images: "Картинки",
@@ -231,7 +224,7 @@ const translations = {
     title: "Nokim Explorer",
     searchPlaceholder: "Arama...",
     searchBtn: "Nokim'de Ara",
-    luckyBtn: "Şansımı Dene",
+    luckyBtn: "Applications",
     langLabel: "Nokim Explorer şu dilde sunulmaktadır:",
     gmail: "Gmail",
     images: "Görseller",
@@ -247,7 +240,7 @@ const translations = {
     title: "Nokim Explorer",
     searchPlaceholder: "搜索...",
     searchBtn: "Nokim搜索",
-    luckyBtn: "手气不错",
+    luckyBtn: "Applications",
     langLabel: "Nokim Explorer提供以下语言：",
     gmail: "Gmail",
     images: "图片",
@@ -263,7 +256,7 @@ const translations = {
     title: "Nokim Explorer",
     searchPlaceholder: "جستجو کنید ...",
     searchBtn: "جستجوی Nokim",
-    luckyBtn: "یا بخت و یا اقبال",
+    luckyBtn: "برنامه ها",
     langLabel: "Nokim Explorer به این زبان ارائە می‌شود:",
     gmail: "Gmail",
     images: "تصاویر",
