@@ -1,1 +1,204 @@
-Hi NOKIM Music
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOKIM Music</title>
+    <style>
+        :root {
+            --primary-color: #00d2ff;
+            --bg-color: #121212;
+            --card-color: #1e1e1e;
+            --text-color: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        /* Language Switcher */
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 5px;
+            background: var(--card-color);
+            color: white;
+            border: 1px solid var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* Player Container */
+        .player-container {
+            margin-top: 100px;
+            background: var(--card-color);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 320px;
+        }
+
+        .album-art {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            box-shadow: 0 0 20px var(--primary-color);
+            animation: rotate 10s linear infinite;
+            animation-play-state: paused;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .song-info h2 { margin: 10px 0 5px; font-size: 1.5rem; }
+        .song-info p { color: #aaa; margin-bottom: 20px; }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+        button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover { transform: scale(1.2); color: var(--primary-color); }
+
+        .play-btn {
+            font-size: 40px;
+            background: var(--primary-color);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* RTL/LTR Support */
+        body.ltr { direction: ltr; text-align: left; }
+        body.ltr .lang-switcher { right: auto; left: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="lang-switcher">
+        <select id="langSelect" onchange="changeLanguage(this.value)">
+            <option value="fa">فارسی</option>
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+            <option value="tr">Türkçe</option>
+        </select>
+    </div>
+
+    <div class="player-container">
+        <div class="album-art" id="art">🎵</div>
+        <div class="song-info">
+            <h2 id="songTitle">نام آهنگ</h2>
+            <p id="artistName">نام هنرمند</p>
+        </div>
+
+        <div class="controls">
+            <button onclick="prevSong()">⏮</button>
+            <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+            <button onclick="nextSong()">⏭</button>
+        </div>
+        
+        <audio id="audioPlayer" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+    </div>
+
+    <script>
+        // 1. Translations Data
+        const translations = {
+            fa: {
+                songTitle: "نام آهنگ",
+                artistName: "نام هنرمند",
+                dir: "rtl",
+                class: ""
+            },
+            en: {
+                songTitle: "Song Title",
+                artistName: "Artist Name",
+                dir: "ltr",
+                class: "ltr"
+            },
+            ru: {
+                songTitle: "Название песни",
+                artistName: "Имя исполнителя",
+                dir: "ltr",
+                class: "ltr"
+            },
+            tr: {
+                songTitle: "Şarkı Adı",
+                artistName: "Sanatçı Adı",
+                dir: "ltr",
+                class: "ltr"
+            }
+        };
+
+        // 2. Music Logic
+        const audio = document.getElementById('audioPlayer');
+        const playBtn = document.getElementById('playBtn');
+        const art = document.getElementById('art');
+        let isPlaying = false;
+
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                playBtn.innerHTML = "▶";
+                art.style.animationPlayState = "paused";
+            } else {
+                audio.play();
+                playBtn.innerHTML = "⏸";
+                art.style.animationPlayState = "running";
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // 3. Language Logic
+        function changeLanguage(lang) {
+            const t = translations[lang];
+            document.getElementById('songTitle').innerText = t.songTitle;
+            document.getElementById('artistName').innerText = t.artistName;
+            document.documentElement.dir = t.dir;
+            document.body.className = t.class;
+            
+            // Update select value visually if needed
+        }
+
+        // Placeholder for Next/Prev
+        function nextSong() { alert("Next Song Feature coming soon!"); }
+        function prevSong() { alert("Prev Song Feature coming soon!"); }
+
+    </script>
+</body>
+  </html>
+
