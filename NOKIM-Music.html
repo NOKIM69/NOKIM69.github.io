@@ -1,204 +1,474 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOKIM Music</title>
-    <style>
-        :root {
-            --primary-color: #00d2ff;
-            --bg-color: #121212;
-            --card-color: #1e1e1e;
-            --text-color: #ffffff;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NOKIM Music</title>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
+  <style>
+    :root {
+      --bg: #0b0b0f;
+      --panel: #15151c;
+      --panel-light: #1d1d26;
+      --text: #f6f6f8;
+      --muted: #9a9aa7;
+      --red: #ff334f;
+      --red-glow: rgba(255, 51, 79, .24);
+    }
 
-        /* Language Switcher */
-        .lang-switcher {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        select {
-            padding: 8px;
-            border-radius: 5px;
-            background: var(--card-color);
-            color: white;
-            border: 1px solid var(--primary-color);
-            cursor: pointer;
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 50% -20%, rgba(255, 51, 79, .15), transparent 50%),
+        var(--bg);
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    }
 
-        /* Player Container */
-        .player-container {
-            margin-top: 100px;
-            background: var(--card-color);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            text-align: center;
-            width: 320px;
-        }
+    .page {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 38px 0 60px;
+    }
 
-        .album-art {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-            box-shadow: 0 0 20px var(--primary-color);
-            animation: rotate 10s linear infinite;
-            animation-play-state: paused;
-        }
+    /* عنوان بالای صفحه */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 38px;
+    }
 
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+    .brand {
+      direction: ltr;
+      margin: 0;
+      font-size: clamp(30px, 5vw, 46px);
+      font-weight: 800;
+      letter-spacing: -1.8px;
+    }
 
-        .song-info h2 { margin: 10px 0 5px; font-size: 1.5rem; }
-        .song-info p { color: #aaa; margin-bottom: 20px; }
+    .brand .music {
+      color: var(--red);
+      margin-left: 8px;
+      text-shadow: 0 0 24px var(--red-glow);
+    }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            align-items: center;
-        }
+    .language-select {
+      color: var(--text);
+      background: var(--panel);
+      border: 1px solid #30303a;
+      border-radius: 12px;
+      padding: 10px 13px;
+      outline: none;
+      cursor: pointer;
+    }
 
-        button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(260px, .8fr);
+      gap: 22px;
+      direction: ltr;
+    }
 
-        button:hover { transform: scale(1.2); color: var(--primary-color); }
+    .player,
+    .playlist {
+      background: linear-gradient(145deg, #191920, #111116);
+      border: 1px solid #292932;
+      border-radius: 24px;
+      box-shadow: 0 22px 60px rgba(0, 0, 0, .28);
+    }
 
-        .play-btn {
-            font-size: 40px;
-            background: var(--primary-color);
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .player {
+      padding: 28px;
+      text-align: center;
+    }
 
-        /* RTL/LTR Support */
-        body.ltr { direction: ltr; text-align: left; }
-        body.ltr .lang-switcher { right: auto; left: 20px; }
-    </style>
+    .album-art {
+      width: min(100%, 310px);
+      aspect-ratio: 1;
+      margin: 0 auto 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 22px;
+      font-size: 86px;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,.25), transparent 25%),
+        linear-gradient(135deg, #ff334f, #842cff 58%, #171725);
+      box-shadow: 0 14px 45px rgba(255, 51, 79, .18);
+    }
+
+    .song-title {
+      margin: 0 0 7px;
+      font-size: 25px;
+    }
+
+    .artist {
+      margin: 0 0 24px;
+      color: var(--muted);
+    }
+
+    .progress-area {
+      direction: ltr;
+      display: grid;
+      grid-template-columns: 42px 1fr 42px;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--red);
+      cursor: pointer;
+    }
+
+    .controls {
+      direction: ltr;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 22px;
+      margin-top: 20px;
+    }
+
+    .control-button {
+      width: 42px;
+      height: 42px;
+      color: #dedee5;
+      background: transparent;
+      border: 0;
+      font-size: 22px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .control-button:hover {
+      color: var(--red);
+      transform: scale(1.08);
+    }
+
+    .play-button {
+      width: 58px;
+      height: 58px;
+      color: white;
+      background: var(--red);
+      border: 0;
+      border-radius: 50%;
+      font-size: 23px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px var(--red-glow);
+      transition: .2s ease;
+    }
+
+    .play-button:hover {
+      transform: scale(1.07);
+    }
+
+    .playlist {
+      padding: 22px;
+    }
+
+    .playlist-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 0 17px;
+      font-size: 19px;
+    }
+
+    .playlist-count {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .track {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      margin-top: 8px;
+      color: var(--text);
+      text-align: left;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .track:hover,
+    .track.active {
+      background: var(--panel-light);
+      border-color: #30303a;
+    }
+
+    .track-cover {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #ff334f, #6a39ff);
+      font-size: 21px;
+    }
+
+    .track:nth-of-type(3) .track-cover {
+      background: linear-gradient(135deg, #00b894, #1565c0);
+    }
+
+    .track:nth-of-type(4) .track-cover {
+      background: linear-gradient(135deg, #ff9f43, #ee5253);
+    }
+
+    .track-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .track-name,
+    .track-artist {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .track-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .track-artist {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .track-duration {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding-top: 24px;
+      }
+
+      .topbar {
+        margin-bottom: 24px;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .player {
+        padding: 20px;
+      }
+
+      .album-art {
+        width: min(72vw, 280px);
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <main class="page">
+    <header class="topbar">
+      <h1 class="brand">
+        <span>NOKIM</span><span class="music">Music</span>
+      </h1>
 
-    <div class="lang-switcher">
-        <select id="langSelect" onchange="changeLanguage(this.value)">
-            <option value="fa">فارسی</option>
-            <option value="en">English</option>
-            <option value="ru">Русский</option>
-            <option value="tr">Türkçe</option>
-        </select>
-    </div>
+      <select class="language-select" aria-label="انتخاب زبان">
+        <option>فارسی</option>
+        <option>English</option>
+        <option>Русский</option>
+        <option>Türkçe</option>
+      </select>
+    </header>
 
-    <div class="player-container">
-        <div class="album-art" id="art">🎵</div>
-        <div class="song-info">
-            <h2 id="songTitle">نام آهنگ</h2>
-            <p id="artistName">نام هنرمند</p>
+    <section class="content">
+      <section class="player" aria-label="پخش‌کننده موسیقی">
+        <div class="album-art" aria-hidden="true">🎧</div>
+
+        <h2 class="song-title" id="songTitle">آهنگ نمونه</h2>
+        <p class="artist" id="artistName">نام هنرمند</p>
+
+        <div class="progress-area">
+          <span id="currentTime">0:00</span>
+          <input id="progress" type="range" min="0" max="100" value="0">
+          <span id="duration">0:00</span>
         </div>
 
         <div class="controls">
-            <button onclick="prevSong()">⏮</button>
-            <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
-            <button onclick="nextSong()">⏭</button>
+          <button class="control-button" id="previousButton" aria-label="آهنگ قبلی">⏮</button>
+          <button class="play-button" id="playButton" aria-label="پخش">▶</button>
+          <button class="control-button" id="nextButton" aria-label="آهنگ بعدی">⏭</button>
         </div>
-        
-        <audio id="audioPlayer" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
-    </div>
 
-    <script>
-        // 1. Translations Data
-        const translations = {
-            fa: {
-                songTitle: "نام آهنگ",
-                artistName: "نام هنرمند",
-                dir: "rtl",
-                class: ""
-            },
-            en: {
-                songTitle: "Song Title",
-                artistName: "Artist Name",
-                dir: "ltr",
-                class: "ltr"
-            },
-            ru: {
-                songTitle: "Название песни",
-                artistName: "Имя исполнителя",
-                dir: "ltr",
-                class: "ltr"
-            },
-            tr: {
-                songTitle: "Şarkı Adı",
-                artistName: "Sanatçı Adı",
-                dir: "ltr",
-                class: "ltr"
-            }
-        };
+        <audio id="audio"></audio>
+      </section>
 
-        // 2. Music Logic
-        const audio = document.getElementById('audioPlayer');
-        const playBtn = document.getElementById('playBtn');
-        const art = document.getElementById('art');
-        let isPlaying = false;
+      <aside class="playlist">
+        <h2 class="playlist-heading">
+          <span>فهرست پخش</span>
+          <span class="playlist-count">۳ آهنگ</span>
+        </h2>
 
-        function togglePlay() {
-            if (isPlaying) {
-                audio.pause();
-                playBtn.innerHTML = "▶";
-                art.style.animationPlayState = "paused";
-            } else {
-                audio.play();
-                playBtn.innerHTML = "⏸";
-                art.style.animationPlayState = "running";
-            }
-            isPlaying = !isPlaying;
+        <button class="track active" data-index="0">
+          <span class="track-cover">🎵</span>
+          <span class="track-info">
+            <span class="track-name">آهنگ نمونه</span>
+            <span class="track-artist">هنرمند نمونه</span>
+          </span>
+          <span class="track-duration">♪</span>
+        </button>
+
+        <button class="track" data-index="1">
+          <span class="track-cover">🌙</span>
+          <span class="track-info">
+            <span class="track-name">شب‌های آرام</span>
+            <span class="track-artist">هنرمند دوم</span>
+          </span>
+          <span class="track-duration">♪</span>
+        </button>
+
+        <button class="track" data-index="2">
+          <span class="track-cover">✨</span>
+          <span class="track-info">
+            <span class="track-name">مسیر تازه</span>
+            <span class="track-artist">هنرمند سوم</span>
+          </span>
+          <span class="track-duration">♪</span>
+        </button>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    // برای پخش واقعی، آدرس فایل آهنگ‌ها را در این بخش قرار بده.
+    const songs = [
+      {
+        title: "آهنگ نمونه",
+        artist: "هنرمند نمونه",
+        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      },
+      {
+        title: "شب‌های آرام",
+        artist: "هنرمند دوم",
+        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+      },
+      {
+        title: "مسیر تازه",
+        artist: "هنرمند سوم",
+        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+      }
+    ];
+
+    const audio = document.getElementById("audio");
+    const playButton = document.getElementById("playButton");
+    const progress = document.getElementById("progress");
+    const currentTimeLabel = document.getElementById("currentTime");
+    const durationLabel = document.getElementById("duration");
+    const trackButtons = [...document.querySelectorAll(".track")];
+
+    let currentIndex = 0;
+
+    function formatTime(seconds) {
+      if (!Number.isFinite(seconds)) return "0:00";
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.floor(seconds % 60).toString().padStart(2, "0");
+      return `${minutes}:${remainingSeconds}`;
+    }
+
+    function loadSong(index, shouldPlay = false) {
+      currentIndex = (index + songs.length) % songs.length;
+      const song = songs[currentIndex];
+
+      document.getElementById("songTitle").textContent = song.title;
+      document.getElementById("artistName").textContent = song.artist;
+      audio.src = song.src;
+
+      trackButtons.forEach((button, i) => {
+        button.classList.toggle("active", i === currentIndex);
+      });
+
+      if (shouldPlay) {
+        audio.play().catch(() => {
+          playButton.textContent = "▶";
+        });
+      }
+    }
+
+    playButton.addEventListener("click", async () => {
+      if (audio.paused) {
+        try {
+          await audio.play();
+        } catch {
+          return;
         }
+      } else {
+        audio.pause();
+      }
+    });
 
-        // 3. Language Logic
-        function changeLanguage(lang) {
-            const t = translations[lang];
-            document.getElementById('songTitle').innerText = t.songTitle;
-            document.getElementById('artistName').innerText = t.artistName;
-            document.documentElement.dir = t.dir;
-            document.body.className = t.class;
-            
-            // Update select value visually if needed
-        }
+    audio.addEventListener("play", () => {
+      playButton.textContent = "⏸";
+      playButton.setAttribute("aria-label", "توقف");
+    });
 
-        // Placeholder for Next/Prev
-        function nextSong() { alert("Next Song Feature coming soon!"); }
-        function prevSong() { alert("Prev Song Feature coming soon!"); }
+    audio.addEventListener("pause", () => {
+      playButton.textContent = "▶";
+      playButton.setAttribute("aria-label", "پخش");
+    });
 
-    </script>
+    document.getElementById("nextButton").addEventListener("click", () => {
+      loadSong(currentIndex + 1, true);
+    });
+
+    document.getElementById("previousButton").addEventListener("click", () => {
+      loadSong(currentIndex - 1, true);
+    });
+
+    trackButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        loadSong(Number(button.dataset.index), true);
+      });
+    });
+
+    audio.addEventListener("loadedmetadata", () => {
+      durationLabel.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      currentTimeLabel.textContent = formatTime(audio.currentTime);
+      progress.value = audio.duration
+        ? (audio.currentTime / audio.duration) * 100
+        : 0;
+    });
+
+    progress.addEventListener("input", () => {
+      if (audio.duration) {
+        audio.currentTime = (Number(progress.value) / 100) * audio.duration;
+      }
+    });
+
+    audio.addEventListener("ended", () => {
+      loadSong(currentIndex + 1, true);
+    });
+
+    loadSong(0);
+  </script>
 </body>
-  </html>
+</html>
 
