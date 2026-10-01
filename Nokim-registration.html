@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ثبت‌نام در NOKIM</title>
+    <!-- لود کردن Supabase از CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background: #121212; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { background: #1e1e1e; padding: 2rem; border-radius: 10px; width: 300px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        input { width: 100%; margin: 10px 0; padding: 8px; box-sizing: border-box; background: #333; border: 1px solid #444; color: white; }
+        button { width: 100%; padding: 10px; background: #007bff; border: none; color: white; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>ثبت‌نام در NOKIM</h2>
+    <input type="email" id="email" placeholder="ایمیل">
+    <input type="password" id="password" placeholder="رمز عبور">
+    <button onclick="signUp()">تایید و ثبت‌نام</button>
+    <p id="message"></p>
+</div>
+
+<script>
+    // اینا رو از Supabase Dashboard بگیر
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+    const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function signUp() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const msg = document.getElementById('message');
+
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+        });
+
+        if (error) {
+            msg.innerText = "خطا: " + error.message;
+        } else {
+            msg.innerText = "ثبت‌نام موفق! ایمیل خود را تایید کنید.";
+        }
+    }
+</script>
+
+</body>
+</html>
