@@ -76,6 +76,7 @@
     padding: 12px 0;
     cursor: pointer;
     border-bottom: 3px solid transparent;
+    user-select: none;
   }
   .tools-bar span.active {
     color: #1a73e8;
@@ -166,6 +167,38 @@
     padding: 30px;
     font-size: 16px;
   }
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .image-grid .img-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #f1f3f4;
+    aspect-ratio: 1;
+  }
+  .image-grid .img-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .image-grid .img-item .img-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    font-size: 12px;
+    padding: 6px 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 </style>
 </head>
 <body>
@@ -191,12 +224,11 @@
   </div>
 </div>
 
-<div class="tools-bar">
-  <span class="active">همه</span>
-  <span>تصاویر</span>
-  <span>ویدیو</span>
-  <span>اخبار</span>
-  <span>بیشتر</span>
+<div class="tools-bar" id="toolsBar">
+  <span class="active" data-mode="web">همه</span>
+  <span data-mode="images">تصاویر</span>
+  <span data-mode="video">ویدیو</span>
+  <span data-mode="news">اخبار</span>
 </div>
 
 <div class="results" id="results">
@@ -215,7 +247,7 @@
     <a href="#">درباره</a>
     <a href="#">تبلیغ</a>
     <a href="#">تجارت</a>
-    <a href="#">نحوه عملکد جستجو</a>
+    <a href="#">نحوه عملکرد جستجو</a>
   </div>
   <div>
     <a href="#">حریم خصوصی</a>
@@ -227,6 +259,7 @@
 <script>
 let currentQuery = '';
 let currentPage = 1;
+let currentMode = 'web';
 
 // ========== گرفتن کلمه جستجو از URL ==========
 const urlParams = new URLSearchParams(window.location.search);
@@ -235,7 +268,18 @@ const query = urlParams.get('q') || '';
 // ========== پر کردن باکس جستجو ==========
 document.getElementById('searchInput').value = query;
 
-// ========== جستجو با DuckDuckGo ==========
+// ========== مدیریت تب‌ها ==========
+document.querySelectorAll('#toolsBar span').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#toolsBar span').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentMode = tab.dataset.mode;
+    currentPage = 1;
+    if (currentQuery) searchDDG(1);
+  });
+});
+
+// ========== جستجو با DuckDuckGo (از طریق پروکسی CORS) ==========
 async function searchDDG(page = 1) {
   if (!query && !currentQuery) {
     document.getElementById('resultStats').textContent = 'لطفاً یک کلمه جستجو وارد کنید.';
@@ -257,8 +301,11 @@ async function searchDDG(page = 1) {
   resultStats.textContent = `در حال جستجوی "${q}" ...`;
   
   try {
-    const url = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`;
-    const response = await fetch(url);
+    // استفاده از پروکسی CORS برای دور زدن محدودیت مرورگر
+    const targetUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+    
+    const response = await fetch(proxyUrl);
     const html = await response.text();
     
     const parser = new DOMParser();
@@ -284,33 +331,68 @@ async function searchDDG(page = 1) {
     
     if (results.length > 0) {
       resultStats.textContent = `${results.length} نتیجه برای "${q}"`;
-      resultList.innerHTML = results.map(r => `
-        <div class="result-item">
-          <div class="result-url">${r.url} <span>▾</span></div>
-          <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
-          <div class="result-desc">${r.desc}</div>
-        </div>
-      `).join('');
       
-      // صفحه‌بندی ساده
-      if (results.length >= 10) {
-        pagination.innerHTML = `
-          <a onclick="searchDDG(${currentPage + 1})">بعدی</a>
+      if (currentMode === 'web') {
+        resultList.innerHTML = results.map(r => `
+          <div class="result-item">
+            <div class="result-url">${r.url} <span>▾</span></div>
+            <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
+            <div class="result-desc">${r.desc}</div>
+          </div>
+        `).join('');
+      } else if (currentMode === 'images') {
+        // نمایش نتایج به صورت شبکه تصاویر
+        resultList.innerHTML = `
+          <div class="image-grid">
+            ${results.map(r => `
+              <div class="img-item" onclick="window.open('${r.link}','_blank')">
+                <img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(r.url)}&sz=128" 
+                     onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f1f3f4%22/><text x=%2250%22 y=%2255%22 font-size=%2212%22 text-anchor=%22middle%22 fill=%22%23999%22>${r.title.slice(0,20)}</text></svg>'">
+                <div class="img-title">${r.title}</div>
+              </div>
+            `).join('')}
+          </div>
         `;
+      } else if (currentMode === 'video') {
+        // نمایش نتایج ویدیو
+        resultList.innerHTML = results.map(r => `
+          <div class="result-item">
+            <div class="result-url">🎬 ${r.url} <span>▾</span></div>
+            <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
+            <div class="result-desc">${r.desc}</div>
+          </div>
+        `).join('');
+      } else if (currentMode === 'news') {
+        // نمایش نتایج خبری
+        resultList.innerHTML = results.map(r => `
+          <div class="result-item">
+            <div class="result-url">📰 ${r.url} <span>▾</span></div>
+            <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
+            <div class="result-desc">${r.desc}</div>
+          </div>
+        `).join('');
       }
+      
+      // صفحه‌بندی
+      pagination.innerHTML = `
+        <a class="${currentPage <= 1 ? 'disabled' : ''}" onclick="searchDDG(${currentPage - 1})">قبلی</a>
+        <span style="color:#5f6368;">صفحه ${currentPage}</span>
+        <a onclick="searchDDG(${currentPage + 1})">بعدی</a>
+      `;
+      
     } else {
       resultStats.textContent = `نتیجه‌ای برای "${q}" یافت نشد.`;
       resultList.innerHTML = `
         <div style="text-align:center;padding:40px;color:#70757a;">
           <p style="font-size:18px;">نتیجه‌ای پیدا نشد 😕</p>
-          <p style="margin-top:10px;">مطمئن شو کلمه رو درست نوشتی یا یه چیذ دیگه جستجو کن</p>
+          <p style="margin-top:10px;">مطمئن شو کلمه رو درست نوشتی یا یه چیز دیگه جستجو کن</p>
         </div>
       `;
     }
     
   } catch (error) {
     loading.style.display = 'none';
-    resultStats.textContent = 'خطا در دریاف نتایج';
+    resultStats.textContent = 'خطا در دریافت نتایج';
     resultList.innerHTML = `
       <div class="error-msg">
         <p>❌ خطا در ارتباط با سرور</p>
@@ -335,4 +417,5 @@ if (query) searchDDG();
 </script>
 
 </body>
-</html>
+ </html>
+ 
