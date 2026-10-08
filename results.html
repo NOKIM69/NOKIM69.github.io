@@ -167,38 +167,19 @@
     padding: 30px;
     font-size: 16px;
   }
-  .image-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  .image-grid .img-item {
-    position: relative;
-    overflow: hidden;
+  .answer-box {
+    background: #f8f9fa;
+    border: 1px solid #dadce0;
     border-radius: 8px;
-    cursor: pointer;
-    background: #f1f3f4;
-    aspect-ratio: 1;
+    padding: 16px;
+    margin-bottom: 24px;
   }
-  .image-grid .img-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  .answer-box h3 {
+    color: #1a73e8;
+    margin-bottom: 8px;
+    font-size: 18px;
   }
-  .image-grid .img-item .img-title {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0,0,0,0.6);
-    color: #fff;
-    font-size: 12px;
-    padding: 6px 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .answer-box p { color: #3c4043; line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -279,7 +260,7 @@ document.querySelectorAll('#toolsBar span').forEach(tab => {
   });
 });
 
-// ========== جستجو با DuckDuckGo (از طریق پروکسی CORS) ==========
+// ========== جستجو با API رسمی DuckDuckGo ==========
 async function searchDDG(page = 1) {
   if (!query && !currentQuery) {
     document.getElementById('resultStats').textContent = 'لطفاً یک کلمه جستجو وارد کنید.';
@@ -301,39 +282,61 @@ async function searchDDG(page = 1) {
   resultStats.textContent = `در حال جستجوی "${q}" ...`;
   
   try {
-    // استفاده از پروکسی CORS برای دور زدن محدودیت مرورگر
-    const targetUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`;
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
-    
-    const response = await fetch(proxyUrl);
-    const html = await response.text();
-    
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    
-    const results = [];
-    doc.querySelectorAll('.result').forEach(item => {
-      const titleEl = item.querySelector('.result__title a');
-      const descEl = item.querySelector('.result__snippet');
-      const urlEl = item.querySelector('.result__url');
-      
-      if (titleEl) {
-        results.push({
-          title: titleEl.textContent,
-          link: titleEl.href,
-          url: urlEl ? urlEl.textContent : '',
-          desc: descEl ? descEl.textContent : ''
-        });
-      }
-    });
+    // API رسمی DuckDuckGo - بدون محدودیت CORS
+    const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json&no_html=1&skip_disambig=1&t=nokim`;
+    const response = await fetch(url);
+    const data = await response.json();
     
     loading.style.display = 'none';
     
-    if (results.length > 0) {
+    const results = [];
+    
+    // پاسخ فوری (Instant Answer)
+    let answerHtml = '';
+    if (data.AbstractText) {
+      answerHtml = `
+        <div class="answer-box">
+          <h3>${data.Heading || 'پاسخ'}</h3>
+          <p>${data.AbstractText}</p>
+          ${data.AbstractURL ? `<p style="margin-top:8px;"><a href="${data.AbstractURL}" target="_blank" style="color:#1a73e8;">منبع بیشتر ↗</a></p>` : ''}
+        </div>
+      `;
+    }
+    
+    // نتایج مرتبط (Related Topics)
+    if (data.RelatedTopics) {
+      data.RelatedTopics.forEach(topic => {
+        if (topic.Text) {
+          results.push({
+            title: topic.Text.split(' - ')[0] || topic.Text,
+            desc: topic.Text,
+            link: topic.FirstURL || '#',
+            url: topic.FirstURL ? new URL(topic.FirstURL).hostname : ''
+          });
+        }
+        // نتایج تو در تو
+        if (topic.Topics) {
+          topic.Topics.forEach(sub => {
+            if (sub.Text) {
+              results.push({
+                title: sub.Text.split(' - ')[0] || sub.Text,
+                desc: sub.Text,
+                link: sub.FirstURL || '#',
+                url: sub.FirstURL ? new URL(sub.FirstURL).hostname : ''
+              });
+            }
+          });
+        }
+      });
+    }
+    
+    if (answerHtml || results.length > 0) {
       resultStats.textContent = `${results.length} نتیجه برای "${q}"`;
       
+      let content = answerHtml;
+      
       if (currentMode === 'web') {
-        resultList.innerHTML = results.map(r => `
+        content += results.map(r => `
           <div class="result-item">
             <div class="result-url">${r.url} <span>▾</span></div>
             <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
@@ -341,21 +344,15 @@ async function searchDDG(page = 1) {
           </div>
         `).join('');
       } else if (currentMode === 'images') {
-        // نمایش نتایج به صورت شبکه تصاویر
-        resultList.innerHTML = `
-          <div class="image-grid">
-            ${results.map(r => `
-              <div class="img-item" onclick="window.open('${r.link}','_blank')">
-                <img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(r.url)}&sz=128" 
-                     onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23f1f3f4%22/><text x=%2250%22 y=%2255%22 font-size=%2212%22 text-anchor=%22middle%22 fill=%22%23999%22>${r.title.slice(0,20)}</text></svg>'">
-                <div class="img-title">${r.title}</div>
-              </div>
-            `).join('')}
+        content += results.map(r => `
+          <div class="result-item">
+            <div class="result-url">🖼️ ${r.url} <span>▾</span></div>
+            <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
+            <div class="result-desc">${r.desc}</div>
           </div>
-        `;
+        `).join('');
       } else if (currentMode === 'video') {
-        // نمایش نتایج ویدیو
-        resultList.innerHTML = results.map(r => `
+        content += results.map(r => `
           <div class="result-item">
             <div class="result-url">🎬 ${r.url} <span>▾</span></div>
             <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
@@ -363,8 +360,7 @@ async function searchDDG(page = 1) {
           </div>
         `).join('');
       } else if (currentMode === 'news') {
-        // نمایش نتایج خبری
-        resultList.innerHTML = results.map(r => `
+        content += results.map(r => `
           <div class="result-item">
             <div class="result-url">📰 ${r.url} <span>▾</span></div>
             <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
@@ -373,7 +369,9 @@ async function searchDDG(page = 1) {
         `).join('');
       }
       
-      // صفحه‌بندی
+      resultList.innerHTML = content;
+      
+      // صفحه‌بندی (API محدودیت صفحه‌بندی نداره، فقط نمایشی)
       pagination.innerHTML = `
         <a class="${currentPage <= 1 ? 'disabled' : ''}" onclick="searchDDG(${currentPage - 1})">قبلی</a>
         <span style="color:#5f6368;">صفحه ${currentPage}</span>
@@ -417,5 +415,5 @@ if (query) searchDDG();
 </script>
 
 </body>
- </html>
- 
+     </html>
+
