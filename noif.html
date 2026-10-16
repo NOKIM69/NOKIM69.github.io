@@ -1,0 +1,32 @@
+<!-- بارگذاری کتابخانه سَپابیس از طریق CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  // اطلاعات پروژه خودت رو اینجا جایگزین کن
+  const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+  const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function logVisit() {
+    try {
+      const { error } = await _supabase
+        .from('visits')
+        .insert([
+          { user_agent: navigator.userAgent }
+        ]);
+      
+      if (error) {
+        console.error('خطا در ثبت بازدید:', error.message);
+      } else {
+        console.log('یه نفر از تور جهانی اومد تو سایت! ثبت شد ✅');
+      }
+    } catch (err) {
+      console.error('مشکل شبکه:', err);
+    }
+  }
+
+  // وقتی صفحه لود شد، بازدید رو ثبت کن
+  window.addEventListener('DOMContentLoaded', logVisit);
+</script>
+
