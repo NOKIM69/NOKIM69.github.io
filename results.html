@@ -180,6 +180,15 @@
     font-size: 18px;
   }
   .answer-box p { color: #3c4043; line-height: 1.6; }
+  .notice {
+    background: #e8f0fe;
+    border: 1px solid #d2e3fc;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    color: #1967d2;
+    font-size: 14px;
+  }
 </style>
 </head>
 <body>
@@ -214,6 +223,7 @@
 
 <div class="results" id="results">
   <div id="resultStats" style="color:#70757a;font-size:14px;margin-bottom:20px;"></div>
+  <div id="notice"></div>
   <div id="resultList"></div>
   <div id="loading" class="loading" style="display:none;">
     <div class="spinner"></div>
@@ -256,12 +266,77 @@ document.querySelectorAll('#toolsBar span').forEach(tab => {
     tab.classList.add('active');
     currentMode = tab.dataset.mode;
     currentPage = 1;
-    if (currentQuery) searchDDG(1);
+    if (currentQuery) searchAll(1);
   });
 });
 
-// ========== جستجو با API رسمی DuckDuckGo ==========
-async function searchDDG(page = 1) {
+// ========== تابع کمکی: استخراج نتایج از HTML ==========
+function parseHTMLResults(html) {
+  const results = [];
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  
+  // نتایج DuckDuckGo HTML
+  const items = doc.querySelectorAll('.result');
+  items.forEach(item => {
+    const linkEl = item.querySelector('a.result__a');
+    const snippetEl = item.querySelector('.result__snippet');
+    if (linkEl) {
+      results.push({
+        title: linkEl.textContent.trim(),
+        link: linkEl.href,
+        url: linkEl.hostname,
+        desc: snippetEl ? snippetEl.textContent.trim() : ''
+      });
+    }
+  });
+  
+  // اگه کلاس دیگه‌ای داشت (نسخه‌های جدیدتر)
+  if (results.length === 0) {
+    const links = doc.querySelectorAll('a[data-testid="result-title-a"]');
+    links.forEach(linkEl => {
+      const parent = linkEl.closest('article') || linkEl.parentElement;
+      const snippetEl = parent ? parent.querySelector('[data-testid="result-snippet"]') : null;
+      results.push({
+        title: linkEl.textContent.trim(),
+        link: linkEl.href,
+        url: linkEl.hostname,
+        desc: snippetEl ? snippetEl.textContent.trim() : ''
+      });
+    });
+  }
+  
+  return results;
+}
+
+// ========== جستجو با پروکسی (HTML DuckDuckGo) ==========
+async function searchViaProxy(q) {
+  const proxies = [
+    { name: 'allorigins', url: (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}` },
+    { name: 'corsproxy', url: (u) => `https://corsproxy.io/?url=${encodeURIComponent(u)}` },
+    { name: 'codetabs', url: (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}` }
+  ];
+  
+  const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`;
+  
+  for (const proxy of proxies) {
+    try {
+      const res = await fetch(proxy.url(searchUrl));
+      if (!res.ok) continue;
+      const html = await res.text();
+      const results = parseHTMLResults(html);
+      if (results.length > 0) {
+        return { results, source: proxy.name };
+      }
+    } catch (e) {
+      // ادامه بده به پروکسی بعدی
+    }
+  }
+  return { results: [], source: null };
+}
+
+// ========== جستجوی اصلی (ترکیبی) ==========
+async function searchAll(page = 1) {
   if (!query && !currentQuery) {
     document.getElementById('resultStats').textContent = 'لطفاً یک کلمه جستجو وارد کنید.';
     return;
@@ -275,25 +350,27 @@ async function searchDDG(page = 1) {
   const resultList = document.getElementById('resultList');
   const resultStats = document.getElementById('resultStats');
   const pagination = document.getElementById('pagination');
+  const notice = document.getElementById('notice');
   
   loading.style.display = 'block';
   resultList.innerHTML = '';
   pagination.innerHTML = '';
+  notice.innerHTML = '';
   resultStats.textContent = `در حال جستجوی "${q}" ...`;
   
+  // ===== مرحله ۱: API رسمی DuckDuckGo =====
+  let answerHtml = '';
+  let apiResults = [];
+  let usedAPI = false;
+  
   try {
-    // API رسمی DuckDuckGo - بدون محدودیت CORS
     const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json&no_html=1&skip_disambig=1&t=nokim`;
     const response = await fetch(url);
     const data = await response.json();
     
-    loading.style.display = 'none';
-    
-    const results = [];
-    
     // پاسخ فوری (Instant Answer)
-    let answerHtml = '';
     if (data.AbstractText) {
+      usedAPI = true;
       answerHtml = `
         <div class="answer-box">
           <h3>${data.Heading || 'پاسخ'}</h3>
@@ -303,22 +380,21 @@ async function searchDDG(page = 1) {
       `;
     }
     
-    // نتایج مرتبط (Related Topics)
+    // نتایج مرتبط
     if (data.RelatedTopics) {
       data.RelatedTopics.forEach(topic => {
         if (topic.Text) {
-          results.push({
+          apiResults.push({
             title: topic.Text.split(' - ')[0] || topic.Text,
             desc: topic.Text,
             link: topic.FirstURL || '#',
             url: topic.FirstURL ? new URL(topic.FirstURL).hostname : ''
           });
         }
-        // نتایج تو در تو
         if (topic.Topics) {
           topic.Topics.forEach(sub => {
             if (sub.Text) {
-              results.push({
+              apiResults.push({
                 title: sub.Text.split(' - ')[0] || sub.Text,
                 desc: sub.Text,
                 link: sub.FirstURL || '#',
@@ -329,76 +405,84 @@ async function searchDDG(page = 1) {
         }
       });
     }
+  } catch (e) {
+    // API رسمی خطا داد، برو سراغ پروکسی
+  }
+  
+  // ===== مرحله ۲: اگه API نتیجه نداشت، پروکسی =====
+  let proxyResults = [];
+  let proxySource = null;
+  
+  if (apiResults.length === 0 && !answerHtml) {
+    const proxyResult = await searchViaProxy(q);
+    proxyResults = proxyResult.results;
+    proxySource = proxyResult.source;
+  }
+  
+  loading.style.display = 'none';
+  
+  const allResults = apiResults.length > 0 ? apiResults : proxyResults;
+  
+  if (answerHtml || allResults.length > 0) {
+    resultStats.textContent = `${allResults.length} نتیجه برای "${q}"`;
     
-    if (answerHtml || results.length > 0) {
-      resultStats.textContent = `${results.length} نتیجه برای "${q}"`;
-      
-      let content = answerHtml;
-      
-      if (currentMode === 'web') {
-        content += results.map(r => `
-          <div class="result-item">
-            <div class="result-url">${r.url} <span>▾</span></div>
-            <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
-            <div class="result-desc">${r.desc}</div>
-          </div>
-        `).join('');
-      } else if (currentMode === 'images') {
-        content += results.map(r => `
-          <div class="result-item">
-            <div class="result-url">🖼️ ${r.url} <span>▾</span></div>
-            <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
-            <div class="result-desc">${r.desc}</div>
-          </div>
-        `).join('');
-      } else if (currentMode === 'video') {
-        content += results.map(r => `
-          <div class="result-item">
-            <div class="result-url">🎬 ${r.url} <span>▾</span></div>
-            <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
-            <div class="result-desc">${r.desc}</div>
-          </div>
-        `).join('');
-      } else if (currentMode === 'news') {
-        content += results.map(r => `
-          <div class="result-item">
-            <div class="result-url">📰 ${r.url} <span>▾</span></div>
-            <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
-            <div class="result-desc">${r.desc}</div>
-          </div>
-        `).join('');
-      }
-      
-      resultList.innerHTML = content;
-      
-      // صفحه‌بندی (API محدودیت صفحه‌بندی نداره، فقط نمایشی)
-      pagination.innerHTML = `
-        <a class="${currentPage <= 1 ? 'disabled' : ''}" onclick="searchDDG(${currentPage - 1})">قبلی</a>
-        <span style="color:#5f6368;">صفحه ${currentPage}</span>
-        <a onclick="searchDDG(${currentPage + 1})">بعدی</a>
-      `;
-      
-    } else {
-      resultStats.textContent = `نتیجه‌ای برای "${q}" یافت نشد.`;
-      resultList.innerHTML = `
-        <div style="text-align:center;padding:40px;color:#70757a;">
-          <p style="font-size:18px;">نتیجه‌ای پیدا نشد 😕</p>
-          <p style="margin-top:10px;">مطمئن شو کلمه رو درست نوشتی یا یه چیز دیگه جستجو کن</p>
-        </div>
-      `;
+    if (proxySource) {
+      notice.innerHTML = `<div class="notice">نتایج از طریق ${proxySource} دریافت شد</div>`;
     }
     
-  } catch (error) {
-    loading.style.display = 'none';
-    resultStats.textContent = 'خطا در دریافت نتایج';
+    let content = answerHtml;
+    
+    if (currentMode === 'web') {
+      content += allResults.map(r => `
+        <div class="result-item">
+          <div class="result-url">${r.url} <span>▾</span></div>
+          <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
+          <div class="result-desc">${r.desc}</div>
+        </div>
+      `).join('');
+    } else if (currentMode === 'images') {
+      content += allResults.map(r => `
+        <div class="result-item">
+          <div class="result-url">🖼️ ${r.url} <span>▾</span></div>
+          <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
+          <div class="result-desc">${r.desc}</div>
+        </div>
+      `).join('');
+    } else if (currentMode === 'video') {
+      content += allResults.map(r => `
+        <div class="result-item">
+          <div class="result-url">🎬 ${r.url} <span>▾</span></div>
+          <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
+          <div class="result-desc">${r.desc}</div>
+        </div>
+      `).join('');
+    } else if (currentMode === 'news') {
+      content += allResults.map(r => `
+        <div class="result-item">
+          <div class="result-url">📰 ${r.url} <span>▾</span></div>
+          <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
+          <div class="result-desc">${r.desc}</div>
+        </div>
+      `).join('');
+    }
+    
+    resultList.innerHTML = content;
+    
+    // صفحه‌بندی
+    pagination.innerHTML = `
+      <a class="${currentPage <= 1 ? 'disabled' : ''}" onclick="searchAll(${currentPage - 1})">قبلی</a>
+      <span style="color:#5f6368;">صفحه ${currentPage}</span>
+      <a onclick="searchAll(${currentPage + 1})">بعدی</a>
+    `;
+    
+  } else {
+    resultStats.textContent = `نتیجه‌ای برای "${q}" یافت نشد.`;
     resultList.innerHTML = `
-      <div class="error-msg">
-        <p>❌ خطا در ارتباط با سرور</p>
-        <p style="margin-top:10px;font-size:14px;">از اتصال اینترنت مطمئن شو و دوباره تلاش کن</p>
-        <button onclick="searchDDG(${currentPage})" style="margin-top:15px;padding:8px 20px;background:#4285f4;color:#fff;border:none;border-radius:4px;cursor:pointer;">تلاش دوباره</button>
+      <div style="text-align:center;padding:40px;color:#70757a;">
+        <p style="font-size:18px;">نتیجه‌ای پیدا نشد 😕</p>
+        <p style="margin-top:10px;">مطمئن شو کلمه رو درست نوشتی یا یه چیز دیگه جستجو کن</p>
       </div>
     `;
-    console.error(error);
   }
 }
 
@@ -411,9 +495,9 @@ function doSearch() {
 }
 
 // ========== اجرا ==========
-if (query) searchDDG();
+if (query) searchAll();
 </script>
 
 </body>
      </html>
-
+ 
