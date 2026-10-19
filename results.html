@@ -1,503 +1,365 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="fa">
+<html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nokim Explorer - نتایج جستجو</title>
-<link rel="icon" type="image/x-icon" href="icon/NOKIM2026.ico">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: Arial, sans-serif; background: #fff; }
-  
-  .search-header {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: #fff;
-    border-bottom: 1px solid #dadce0;
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    z-index: 100;
-  }
-  .search-header .logo-small {
-    font-size: 24px;
-    font-weight: bold;
-    color: #3C3C3C;
-    white-space: nowrap;
-  }
-  .search-header .search-box { flex: 1; max-width: 640px; }
-  .search-header .search-container {
-    display: flex;
-    align-items: center;
-    border: 1px solid #dadce0;
-    border-radius: 24px;
-    padding: 0 14px;
-    height: 44px;
-    background: #fff;
-    box-shadow: 0 1px 6px rgba(32,33,36,0.28);
-  }
-  .search-header .search-container:hover,
-  .search-header .search-container:focus-within {
-    box-shadow: 0 1px 6px rgba(32,33,36,0.28);
-    border-color: transparent;
-  }
-  .search-header .search-input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    color: #1f1f1f;
-    background: transparent;
-    height: 34px;
-    font-family: Arial, sans-serif;
-  }
-  .search-header .search-icon { color: #9aa0a6; display: flex; align-items: center; margin-left: 8px; }
-  .search-header .search-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #4285f4;
-    display: flex;
-    align-items: center;
-  }
-  
-  .tools-bar {
-    margin-top: 80px;
-    padding: 0 20px;
-    border-bottom: 1px solid #dadce0;
-    display: flex;
-    gap: 20px;
-    font-size: 14px;
-    color: #5f6368;
-  }
-  .tools-bar span {
-    padding: 12px 0;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    user-select: none;
-  }
-  .tools-bar span.active {
-    color: #1a73e8;
-    border-bottom-color: #1a73e8;
-  }
-  
-  .results {
-    max-width: 652px;
-    margin: 20px auto;
-    padding: 0 20px;
-  }
-  .result-item {
-    margin-bottom: 28px;
-  }
-  .result-url {
-    font-size: 14px;
-    color: #202124;
-    line-height: 1.3;
-  }
-  .result-url span { color: #5f6368; }
-  .result-title {
-    font-size: 20px;
-    color: #1a0dab;
-    cursor: pointer;
-    line-height: 1.3;
-    margin: 4px 0;
-  }
-  .result-title:hover { text-decoration: underline; }
-  .result-desc {
-    font-size: 14px;
-    color: #4d5156;
-    line-height: 1.58;
-  }
-  
-  .pagination {
-    text-align: center;
-    margin: 40px 0;
-    font-size: 14px;
-    color: #4285f4;
-  }
-  .pagination a {
-    color: #4285f4;
-    text-decoration: none;
-    margin: 0 8px;
-    cursor: pointer;
-  }
-  .pagination a:hover { text-decoration: underline; }
-  .pagination a.disabled { color: #999; cursor: default; }
-  
-  .footer {
-    background: #f3f5f6;
-    padding: 15px 30px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    font-size: 15px;
-    color: #1f1f1f;
-  }
-  .footer a {
-    color: #1f1f1f;
-    text-decoration: none;
-    padding: 15px;
-    white-space: nowrap;
-  }
-  .footer a:hover { text-decoration: underline; }
-  
-  .loading {
-    text-align: center;
-    padding: 50px;
-    color: #70757a;
-  }
-  .spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #4285f4;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
-  }
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  .error-msg {
-    color: #d93025;
-    text-align: center;
-    padding: 30px;
-    font-size: 16px;
-  }
-  .answer-box {
-    background: #f8f9fa;
-    border: 1px solid #dadce0;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 24px;
-  }
-  .answer-box h3 {
-    color: #1a73e8;
-    margin-bottom: 8px;
-    font-size: 18px;
-  }
-  .answer-box p { color: #3c4043; line-height: 1.6; }
-  .notice {
-    background: #e8f0fe;
-    border: 1px solid #d2e3fc;
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-bottom: 20px;
-    color: #1967d2;
-    font-size: 14px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nokim Explorer - نتایج جستجو</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+        body {
+            background-color: #fff;
+            color: #202124;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        /* هدر صفحه */
+        header {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #dfe1e5;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #202124;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .search-form {
+            display: flex;
+            align-items: center;
+            border: 1px solid #dfe1e5;
+            border-radius: 24px;
+            padding: 6px 16px;
+            width: 100%;
+            max-width: 600px;
+            background: #fff;
+            box-shadow: none;
+            transition: box-shadow 0.2s;
+        }
+        .search-form:hover, .search-form:focus-within {
+            box-shadow: 0 1px 6px rgba(32,33,36,.28);
+            border-color: rgba(223,225,229,0);
+        }
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: transparent;
+            color: #202124;
+        }
+        .search-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #4285f4;
+            padding-right: 8px;
+        }
+        /* تب‌های جستجو */
+        .tabs-bar {
+            display: flex;
+            padding: 0 160px;
+            border-bottom: 1px solid #dfe1e5;
+            background: #fff;
+            gap: 20px;
+            overflow-x: auto;
+        }
+        @media(max-width: 768px) {
+            .tabs-bar { padding: 0 15px; }
+            header { padding: 10px; gap: 10px; }
+        }
+        .tab-item {
+            padding: 10px 12px;
+            font-size: 14px;
+            color: #5f6368;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .tab-item.active {
+            color: #1a73e8;
+            border-bottom-color: #1a73e8;
+            font-weight: bold;
+        }
+        /* محتوای نتایج */
+        .main-container {
+            flex: 1;
+            max-width: 750px;
+            padding: 20px;
+            margin-right: 150px;
+        }
+        @media(max-width: 900px) {
+            .main-container { margin-right: 0; width: 100%; }
+        }
+        .status-msg {
+            font-size: 13px;
+            color: #70757a;
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dadce0;
+        }
+        .result-card {
+            margin-bottom: 24px;
+        }
+        .result-url {
+            font-size: 12px;
+            color: #202124;
+            margin-bottom: 3px;
+            word-break: break-all;
+        }
+        .result-title {
+            font-size: 18px;
+            color: #1a0dab;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 3px;
+        }
+        .result-title:hover {
+            text-decoration: underline;
+        }
+        .result-snippet {
+            font-size: 14px;
+            color: #4d5156;
+            line-height: 1.5;
+        }
+        /* فوتر */
+        footer {
+            background: #f2f2f2;
+            border-top: 1px solid #dadce0;
+            padding: 12px 20px;
+            font-size: 13px;
+            color: #70757a;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
-<div class="search-header">
-  <div class="logo-small">Nokim</div>
-  <div class="search-box">
-    <form id="searchForm" onsubmit="return doSearch()">
-      <div class="search-container">
-        <div class="search-icon">
-          <svg focusable="false" height="20" viewBox="0 0 24 24" width="20">
-            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"></path>
-          </svg>
+    <!-- هدر بالای صفحه -->
+    <header>
+        <a href="Nokim.html" class="logo-area">Nokim</a>
+        <form class="search-form" id="searchForm" onsubmit="performSearch(event)">
+            <input type="text" id="searchInput" class="search-input" placeholder="جستجو کنید ...">
+            <button type="submit" class="search-btn">🔍</button>
+        </form>
+    </header>
+
+    <!-- نوار تب‌ها -->
+    <div class="tabs-bar">
+        <div class="tab-item active" onclick="switchTab('all', this)">همه</div>
+        <div class="tab-item" onclick="switchTab('wiki', this)">ویکی‌پدیا 📚</div>
+        <div class="tab-item" onclick="switchTab('images', this)">تصاویر</div>
+        <div class="tab-item" onclick="switchTab('videos', this)">ویدیو</div>
+    </div>
+
+    <!-- بدنه اصلی نتایج -->
+    <div class="main-container">
+        <div id="statusNotice" class="status-msg" style="display: none;"></div>
+        <div id="resultsList">
+            <div style="color: #70757a; margin-top: 20px;">در حال بارگذاری نتایج...</div>
         </div>
-        <input class="search-input" type="text" id="searchInput" placeholder="جستجو کنید ..." autofocus>
-        <button class="search-btn" type="submit">
-          <svg focusable="false" height="20" viewBox="0 0 24 24" width="20">
-            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"></path>
-          </svg>
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+    </div>
 
-<div class="tools-bar" id="toolsBar">
-  <span class="active" data-mode="web">همه</span>
-  <span data-mode="images">تصاویر</span>
-  <span data-mode="video">ویدیو</span>
-  <span data-mode="news">اخبار</span>
-</div>
+    <!-- فوتر -->
+    <footer>
+        NOKIM Explorer &copy; 1405 - جستجوی هوشمند و سبک
+    </footer>
 
-<div class="results" id="results">
-  <div id="resultStats" style="color:#70757a;font-size:14px;margin-bottom:20px;"></div>
-  <div id="notice"></div>
-  <div id="resultList"></div>
-  <div id="loading" class="loading" style="display:none;">
-    <div class="spinner"></div>
-    <p>در حال جستجو...</p>
-  </div>
-</div>
+    <script>
+        let currentQuery = '';
+        let currentTab = 'all';
 
-<div class="pagination" id="pagination"></div>
-
-<div class="footer">
-  <div>
-    <a href="#">درباره</a>
-    <a href="#">تبلیغ</a>
-    <a href="#">تجارت</a>
-    <a href="#">نحوه عملکرد جستجو</a>
-  </div>
-  <div>
-    <a href="#">حریم خصوصی</a>
-    <a href="#">شرایط</a>
-    <a href="#">تنظیمات</a>
-  </div>
-</div>
-
-<script>
-let currentQuery = '';
-let currentPage = 1;
-let currentMode = 'web';
-
-// ========== گرفتن کلمه جستجو از URL ==========
-const urlParams = new URLSearchParams(window.location.search);
-const query = urlParams.get('q') || '';
-
-// ========== پر کردن باکس جستجو ==========
-document.getElementById('searchInput').value = query;
-
-// ========== مدیریت تب‌ها ==========
-document.querySelectorAll('#toolsBar span').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('#toolsBar span').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    currentMode = tab.dataset.mode;
-    currentPage = 1;
-    if (currentQuery) searchAll(1);
-  });
-});
-
-// ========== تابع کمکی: استخراج نتایج از HTML ==========
-function parseHTMLResults(html) {
-  const results = [];
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  
-  // نتایج DuckDuckGo HTML
-  const items = doc.querySelectorAll('.result');
-  items.forEach(item => {
-    const linkEl = item.querySelector('a.result__a');
-    const snippetEl = item.querySelector('.result__snippet');
-    if (linkEl) {
-      results.push({
-        title: linkEl.textContent.trim(),
-        link: linkEl.href,
-        url: linkEl.hostname,
-        desc: snippetEl ? snippetEl.textContent.trim() : ''
-      });
-    }
-  });
-  
-  // اگه کلاس دیگه‌ای داشت (نسخه‌های جدیدتر)
-  if (results.length === 0) {
-    const links = doc.querySelectorAll('a[data-testid="result-title-a"]');
-    links.forEach(linkEl => {
-      const parent = linkEl.closest('article') || linkEl.parentElement;
-      const snippetEl = parent ? parent.querySelector('[data-testid="result-snippet"]') : null;
-      results.push({
-        title: linkEl.textContent.trim(),
-        link: linkEl.href,
-        url: linkEl.hostname,
-        desc: snippetEl ? snippetEl.textContent.trim() : ''
-      });
-    });
-  }
-  
-  return results;
-}
-
-// ========== جستجو با پروکسی (HTML DuckDuckGo) ==========
-async function searchViaProxy(q) {
-  const proxies = [
-    { name: 'allorigins', url: (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}` },
-    { name: 'corsproxy', url: (u) => `https://corsproxy.io/?url=${encodeURIComponent(u)}` },
-    { name: 'codetabs', url: (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}` }
-  ];
-  
-  const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`;
-  
-  for (const proxy of proxies) {
-    try {
-      const res = await fetch(proxy.url(searchUrl));
-      if (!res.ok) continue;
-      const html = await res.text();
-      const results = parseHTMLResults(html);
-      if (results.length > 0) {
-        return { results, source: proxy.name };
-      }
-    } catch (e) {
-      // ادامه بده به پروکسی بعدی
-    }
-  }
-  return { results: [], source: null };
-}
-
-// ========== جستجوی اصلی (ترکیبی) ==========
-async function searchAll(page = 1) {
-  if (!query && !currentQuery) {
-    document.getElementById('resultStats').textContent = 'لطفاً یک کلمه جستجو وارد کنید.';
-    return;
-  }
-  
-  const q = query || currentQuery;
-  currentQuery = q;
-  currentPage = page;
-  
-  const loading = document.getElementById('loading');
-  const resultList = document.getElementById('resultList');
-  const resultStats = document.getElementById('resultStats');
-  const pagination = document.getElementById('pagination');
-  const notice = document.getElementById('notice');
-  
-  loading.style.display = 'block';
-  resultList.innerHTML = '';
-  pagination.innerHTML = '';
-  notice.innerHTML = '';
-  resultStats.textContent = `در حال جستجوی "${q}" ...`;
-  
-  // ===== مرحله ۱: API رسمی DuckDuckGo =====
-  let answerHtml = '';
-  let apiResults = [];
-  let usedAPI = false;
-  
-  try {
-    const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json&no_html=1&skip_disambig=1&t=nokim`;
-    const response = await fetch(url);
-    const data = await response.json();
-    
-    // پاسخ فوری (Instant Answer)
-    if (data.AbstractText) {
-      usedAPI = true;
-      answerHtml = `
-        <div class="answer-box">
-          <h3>${data.Heading || 'پاسخ'}</h3>
-          <p>${data.AbstractText}</p>
-          ${data.AbstractURL ? `<p style="margin-top:8px;"><a href="${data.AbstractURL}" target="_blank" style="color:#1a73e8;">منبع بیشتر ↗</a></p>` : ''}
-        </div>
-      `;
-    }
-    
-    // نتایج مرتبط
-    if (data.RelatedTopics) {
-      data.RelatedTopics.forEach(topic => {
-        if (topic.Text) {
-          apiResults.push({
-            title: topic.Text.split(' - ')[0] || topic.Text,
-            desc: topic.Text,
-            link: topic.FirstURL || '#',
-            url: topic.FirstURL ? new URL(topic.FirstURL).hostname : ''
-          });
-        }
-        if (topic.Topics) {
-          topic.Topics.forEach(sub => {
-            if (sub.Text) {
-              apiResults.push({
-                title: sub.Text.split(' - ')[0] || sub.Text,
-                desc: sub.Text,
-                link: sub.FirstURL || '#',
-                url: sub.FirstURL ? new URL(sub.FirstURL).hostname : ''
-              });
+        // خواندن پارامتر q از URL به هنگام لود صفحه
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const q = urlParams.get('q');
+            if (q) {
+                currentQuery = q.trim();
+                document.getElementById('searchInput').value = currentQuery;
+                runSearchEngine(currentQuery, currentTab);
+            } else {
+                document.getElementById('resultsList').innerHTML = '<div style="color: #70757a;">لطفاً عبارتی را برای جستجو وارد کنید.</div>';
             }
-          });
+        });
+
+        // ارسال فرم جستجو
+        function performSearch(e) {
+            e.preventDefault();
+            const val = document.getElementById('searchInput').value.trim();
+            if (val) {
+                window.location.href = `results.html?q=${encodeURIComponent(val)}`;
+            }
         }
-      });
-    }
-  } catch (e) {
-    // API رسمی خطا داد، برو سراغ پروکسی
-  }
-  
-  // ===== مرحله ۲: اگه API نتیجه نداشت، پروکسی =====
-  let proxyResults = [];
-  let proxySource = null;
-  
-  if (apiResults.length === 0 && !answerHtml) {
-    const proxyResult = await searchViaProxy(q);
-    proxyResults = proxyResult.results;
-    proxySource = proxyResult.source;
-  }
-  
-  loading.style.display = 'none';
-  
-  const allResults = apiResults.length > 0 ? apiResults : proxyResults;
-  
-  if (answerHtml || allResults.length > 0) {
-    resultStats.textContent = `${allResults.length} نتیجه برای "${q}"`;
-    
-    if (proxySource) {
-      notice.innerHTML = `<div class="notice">نتایج از طریق ${proxySource} دریافت شد</div>`;
-    }
-    
-    let content = answerHtml;
-    
-    if (currentMode === 'web') {
-      content += allResults.map(r => `
-        <div class="result-item">
-          <div class="result-url">${r.url} <span>▾</span></div>
-          <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
-          <div class="result-desc">${r.desc}</div>
-        </div>
-      `).join('');
-    } else if (currentMode === 'images') {
-      content += allResults.map(r => `
-        <div class="result-item">
-          <div class="result-url">🖼️ ${r.url} <span>▾</span></div>
-          <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
-          <div class="result-desc">${r.desc}</div>
-        </div>
-      `).join('');
-    } else if (currentMode === 'video') {
-      content += allResults.map(r => `
-        <div class="result-item">
-          <div class="result-url">🎬 ${r.url} <span>▾</span></div>
-          <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
-          <div class="result-desc">${r.desc}</div>
-        </div>
-      `).join('');
-    } else if (currentMode === 'news') {
-      content += allResults.map(r => `
-        <div class="result-item">
-          <div class="result-url">📰 ${r.url} <span>▾</span></div>
-          <div class="result-title" onclick="window.open('${r.link}','_blank')">${r.title}</div>
-          <div class="result-desc">${r.desc}</div>
-        </div>
-      `).join('');
-    }
-    
-    resultList.innerHTML = content;
-    
-    // صفحه‌بندی
-    pagination.innerHTML = `
-      <a class="${currentPage <= 1 ? 'disabled' : ''}" onclick="searchAll(${currentPage - 1})">قبلی</a>
-      <span style="color:#5f6368;">صفحه ${currentPage}</span>
-      <a onclick="searchAll(${currentPage + 1})">بعدی</a>
-    `;
-    
-  } else {
-    resultStats.textContent = `نتیجه‌ای برای "${q}" یافت نشد.`;
-    resultList.innerHTML = `
-      <div style="text-align:center;padding:40px;color:#70757a;">
-        <p style="font-size:18px;">نتیجه‌ای پیدا نشد 😕</p>
-        <p style="margin-top:10px;">مطمئن شو کلمه رو درست نوشتی یا یه چیز دیگه جستجو کن</p>
-      </div>
-    `;
-  }
-}
 
-// ========== جستجوی جدید از فرم ==========
-function doSearch() {
-  const q = document.getElementById('searchInput').value.trim();
-  if (!q) return false;
-  window.location.href = `results.html?q=${encodeURIComponent(q)}`;
-  return false;
-}
+        // تغییر تب‌ها
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            currentTab = tabName;
+            
+            if (currentQuery) {
+                runSearchEngine(currentQuery, currentTab);
+            }
+        }
 
-// ========== اجرا ==========
-if (query) searchAll();
-</script>
+        // موتور اصلی مدیریت منابع جستجو
+        async function runSearchEngine(query, tab) {
+            const resultsContainer = document.getElementById('resultsList');
+            const notice = document.getElementById('statusNotice');
+            
+            resultsContainer.innerHTML = '<div style="color: #70757a; margin-top: 20px;">در حال جستجو...</div>';
+            notice.style.display = 'none';
 
+            if (tab === 'wiki') {
+                // جستجو فقط در ویکی‌پدیا
+                notice.style.display = 'block';
+                notice.innerText = 'نتایج مستقیماً از ویکی‌پدیا فارسی دریافت شد.';
+                const wikiResults = await fetchWikipedia(query);
+                renderResults(wikiResults);
+            } else if (tab === 'all') {
+                // تب همه: ترکیب نتایج وب (DuckDuckGo) و ویکی‌پدیا
+                notice.style.display = 'block';
+                notice.innerText = 'نتایج از وب و ویکی‌پدیا دریافت شد.';
+                
+                const webResults = await fetchDuckDuckGoWithProxies(query);
+                const wikiResults = await fetchWikipedia(query);
+                
+                // ادغام نتایج (ابتدا چند مورد ویکی و سپس وب)
+                const combined = [...wikiResults.slice(0, 3), ...webResults];
+                renderResults(combined);
+            } else {
+                // برای تصاویر و ویدیوها فعلاً پیام آزمایشی
+                notice.style.display = 'none';
+                resultsContainer.innerHTML = `<div style="color: #70757a; margin-top: 20px;">بخش ${elementText(tab)} در حال توسعه است...</div>`;
+            }
+        }
+
+        // تابع دریافت اطلاعات از ویکی‌پدیا فارسی (بدون نیاز به پروکسی و کاملاً امن)
+        async function fetchWikipedia(query) {
+            const url = `https://fa.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=8&namespace=0&format=json&origin=*`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const titles = data[1];
+                const descriptions = data[2];
+                const links = data[3];
+
+                let results = [];
+                for (let i = 0; i < titles.length; i++) {
+                    results.push({
+                        title: titles[i],
+                        snippet: descriptions[i] || 'مقاله مربوط در ویکی‌پدیا موجود است.',
+                        url: links[i]
+                    });
+                }
+                return results;
+            } catch (err) {
+                console.error("خطا در ارتباط با ویکی‌پدیا:", err);
+                return [];
+            }
+        }
+
+        // تابع دریافت نتایج وب با زنجیره پروکسی‌ها (Fallback)
+        async function fetchDuckDuckGoWithProxies(query) {
+            const targetUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+            const proxies = [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
+                `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
+            ];
+
+            for (let proxyUrl of proxies) {
+                try {
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) continue;
+                    const htmlText = await response.text();
+                    
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlText, 'text/html');
+                    const items = doc.querySelectorAll('.result');
+                    
+                    let results = [];
+                    items.forEach(item => {
+                        const titleEl = item.querySelector('.result__a') || item.querySelector('[data-testid="result-title-a"]');
+                        const snippetEl = item.querySelector('.result__snippet');
+                        
+                        if (titleEl) {
+                            results.push({
+                                title: titleEl.textContent.trim(),
+                                snippet: snippetEl ? snippetEl.textContent.trim() : '',
+                                url: titleEl.getAttribute('href') || '#'
+                            });
+                        }
+                    });
+
+                    if (results.length > 0) {
+                        return results;
+                    }
+                } catch (e) {
+                    console.warn("پروکسی ناموفق بود، تلاش با بعدی...", e);
+                }
+            }
+            return [];
+        }
+
+        // رندر کردن کارت‌های نتیجه در صفحه
+        function renderResults(results) {
+            const container = document.getElementById('resultsList');
+            if (!results || results.length === 0) {
+                container.innerHTML = '<div style="color: #70757a; margin-top: 20px;">هیچ نتیجه‌ای یافت نشد.</div>';
+                return;
+            }
+
+            let html = '';
+            results.forEach(item => {
+                html += `
+                    <div class="result-card">
+                        <div class="result-url">${escapeHtml(item.url)}</div>
+                        <a href="${escapeHtml(item.url)}" target="_blank" class="result-title">${escapeHtml(item.title)}</a>
+                        <div class="result-snippet">${escapeHtml(item.snippet)}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // تابع کمکی برای جلوگیری از خطاهای اسکریپتی (امنیت XSS)
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+
+        function elementText(tab) {
+            if (tab === 'images') return 'تصاویر';
+            if (tab === 'videos') return 'ویدیو';
+            return '';
+        }
+    </script>
 </body>
-     </html>
+</html>
+
  
