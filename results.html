@@ -1,29 +1,35 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+ <!DOCTYPE html>
+<html lang="fa" dir="rtl" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nokim Explorer - نتایج جستجو</title>
+    <title id="pageTitle">Nokim Explorer - نتایج جستجو</title>
     <style>
-        * {
-            box-sizing: border-box;
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #202124;
+            --link-color: #1a0dab;
+            --url-color: #006621;
+            --snippet-color: #4d5156;
+            --border-color: #dfe1e5;
+            --hover-bg: #f8f9fa;
+            --primary-blue: #1a73e8;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
             padding: 0;
-            font-family: Tahoma, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
-        body {
-            background-color: #fff;
-            color: #202124;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        /* هدر صفحه */
+
+        /* هدر جستجو */
         header {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            border-bottom: 1px solid #dfe1e5;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
             background: #fff;
             position: sticky;
             top: 0;
@@ -31,335 +37,501 @@
             gap: 20px;
             flex-wrap: wrap;
         }
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: #202124;
+
+        .logo {
             font-size: 22px;
             font-weight: bold;
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
+
         .search-form {
             display: flex;
             align-items: center;
-            border: 1px solid #dfe1e5;
+            border: 1px solid var(--border-color);
             border-radius: 24px;
             padding: 6px 16px;
             width: 100%;
             max-width: 600px;
             background: #fff;
-            box-shadow: none;
-            transition: box-shadow 0.2s;
+            box-shadow: 0 1px 6px rgba(32,33,36,.08);
         }
-        .search-form:hover, .search-form:focus-within {
-            box-shadow: 0 1px 6px rgba(32,33,36,.28);
-            border-color: rgba(223,225,229,0);
-        }
-        .search-input {
+
+        .search-form input {
             flex: 1;
             border: none;
             outline: none;
             font-size: 16px;
             background: transparent;
-            color: #202124;
+            color: var(--text-color);
         }
-        .search-btn {
-            background: none;
+
+        .search-form select {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 4px 8px;
+            background: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            margin-inline-start: 10px;
+        }
+
+        .search-form button {
+            background: transparent;
             border: none;
             cursor: pointer;
             font-size: 16px;
-            color: #4285f4;
-            padding-right: 8px;
+            color: var(--primary-blue);
+            padding: 0 4px;
         }
-        /* تب‌های جستجو */
-        .tabs-bar {
+
+        /* تب‌ها */
+        .tabs {
             display: flex;
-            padding: 0 160px;
-            border-bottom: 1px solid #dfe1e5;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 24px;
             background: #fff;
-            gap: 20px;
-            overflow-x: auto;
-        }
-        @media(max-width: 768px) {
-            .tabs-bar { padding: 0 15px; }
-            header { padding: 10px; gap: 10px; }
-        }
-        .tab-item {
-            padding: 10px 12px;
             font-size: 14px;
-            color: #5f6368;
+        }
+
+        .tab {
+            padding: 12px 4px;
             cursor: pointer;
+            color: #5f6368;
             border-bottom: 3px solid transparent;
             user-select: none;
-            white-space: nowrap;
         }
-        .tab-item.active {
-            color: #1a73e8;
-            border-bottom-color: #1a73e8;
+
+        .tab.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
             font-weight: bold;
         }
-        /* محتوای نتایج */
+
+        /* محتوای اصلی نتایج */
         .main-container {
-            flex: 1;
-            max-width: 750px;
-            padding: 20px;
-            margin-right: 150px;
+            max-width: 800px;
+            margin: 20px 24px;
         }
-        @media(max-width: 900px) {
-            .main-container { margin-right: 0; width: 100%; }
-        }
-        .status-msg {
+
+        .result-stats {
             font-size: 13px;
             color: #70757a;
-            margin-bottom: 15px;
-            padding: 8px 12px;
-            background: #f8f9fa;
-            border-radius: 4px;
-            border: 1px solid #dadce0;
+            margin-bottom: 16px;
         }
-        .result-card {
-            margin-bottom: 24px;
+
+        .result-item {
+            margin-bottom: 26px;
         }
+
         .result-url {
-            font-size: 12px;
-            color: #202124;
+            font-size: 14px;
+            color: var(--url-color);
+            text-decoration: none;
+            display: block;
             margin-bottom: 3px;
             word-break: break-all;
         }
+
         .result-title {
-            font-size: 18px;
-            color: #1a0dab;
+            font-size: 20px;
+            color: var(--link-color);
             text-decoration: none;
-            display: inline-block;
+            display: block;
             margin-bottom: 3px;
         }
+
         .result-title:hover {
             text-decoration: underline;
         }
+
         .result-snippet {
             font-size: 14px;
-            color: #4d5156;
-            line-height: 1.5;
+            color: var(--snippet-color);
+            line-height: 1.58;
         }
+
+        /* لودینگ و خطاها */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 16px;
+            color: #5f6368;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #70757a;
+            font-size: 16px;
+        }
+
         /* فوتر */
         footer {
+            margin-top: 60px;
             background: #f2f2f2;
-            border-top: 1px solid #dadce0;
-            padding: 12px 20px;
-            font-size: 13px;
+            border-top: 1px solid var(--border-color);
+            font-size: 14px;
             color: #70757a;
-            text-align: center;
+        }
+
+        .footer-inner {
+            padding: 12px 24px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-inner a {
+            color: #70757a;
+            text-decoration: none;
+        }
+
+        .footer-inner a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
-    <!-- هدر بالای صفحه -->
     <header>
-        <a href="Nokim.html" class="logo-area">Nokim</a>
-        <form class="search-form" id="searchForm" onsubmit="performSearch(event)">
-            <input type="text" id="searchInput" class="search-input" placeholder="جستجو کنید ...">
-            <button type="submit" class="search-btn">🔍</button>
+        <a href="Nokim.html" class="logo">⚡ NOKIM</a>
+        <form class="search-form" onsubmit="handleNewSearch(event)">
+            <input type="text" id="searchInput" autocomplete="off">
+            <select id="langSelector" onchange="changeLanguage()">
+                <option value="fa">فارسی</option>
+                <option value="en">English</option>
+                <option value="ru">Русский</option>
+                <option value="tr">Türkçe</option>
+                <option value="zh">中文</option>
+            </select>
+            <button type="submit" id="searchBtn">🔍</button>
         </form>
     </header>
 
-    <!-- نوار تب‌ها -->
-    <div class="tabs-bar">
-        <div class="tab-item active" onclick="switchTab('all', this)">همه</div>
-        <div class="tab-item" onclick="switchTab('wiki', this)">ویکی‌پدیا 📚</div>
-        <div class="tab-item" onclick="switchTab('images', this)">تصاویر</div>
-        <div class="tab-item" onclick="switchTab('videos', this)">ویدیو</div>
+    <div class="tabs">
+        <div class="tab active" data-tab="all" id="tabAll" onclick="switchTab('all')">همه</div>
+        <div class="tab" data-tab="wiki" id="tabWiki" onclick="switchTab('wiki')">ویکی‌پدیا</div>
+        <div class="tab" data-tab="images" id="tabImages" onclick="switchTab('images')">تصاویر</div>
+        <div class="tab" data-tab="videos" id="tabVideos" onclick="switchTab('videos')">ویدیو</div>
+        <div class="tab" data-tab="news" id="tabNews" onclick="switchTab('news')">اخبار</div>
     </div>
 
-    <!-- بدنه اصلی نتایج -->
     <div class="main-container">
-        <div id="statusNotice" class="status-msg" style="display: none;"></div>
-        <div id="resultsList">
-            <div style="color: #70757a; margin-top: 20px;">در حال بارگذاری نتایج...</div>
+        <div id="resultStats" class="result-stats"></div>
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <span id="loadingText">در حال جستجو...</span>
         </div>
+        <div id="resultList"></div>
     </div>
 
-    <!-- فوتر -->
     <footer>
-        NOKIM Explorer &copy; 1405 - جستجوی هوشمند و سبک
+        <div class="footer-inner">
+            <span id="footerIran">🇮🇷 NOKIM Explorer Project</span>
+            <a href="#" id="footerAbout">درباره</a>
+            <a href="#" id="footerPrivacy">حریم خصوصی</a>
+            <a href="#" id="footerTerms">شرایط</a>
+        </div>
     </footer>
 
     <script>
-        let currentQuery = '';
-        let currentTab = 'all';
+        // دیکشنری ترجمه‌های رابط کاربری بر اساس زبان انتخابی
+        const i18n = {
+            fa: {
+                title: "Nokim Explorer - نتایج جستجو",
+                all: "همه", wiki: "ویکی‌پدیا", images: "تصاویر", videos: "ویدیو", news: "اخبار",
+                loading: "در حال جستجو...",
+                noResults: "نتیجه‌ای پیدا نشد 😕 لطفاً املای عبارت خود را بررسی کنید.",
+                stats: (count, time) => `حدود ${count} نتیجه (${time} ثانیه)`,
+                about: "درباره", privacy: "حریم خصوصی", terms: "شرایط",
+                dir: "rtl"
+            },
+            en: {
+                title: "Nokim Explorer - Search Results",
+                all: "All", wiki: "Wikipedia", images: "Images", videos: "Videos", news: "News",
+                loading: "Searching...",
+                noResults: "No results found 😕 Please check your spelling.",
+                stats: (count, time) => `About ${count} results (${time}s)`,
+                about: "About", privacy: "Privacy", terms: "Terms",
+                dir: "ltr"
+            },
+            ru: {
+                title: "Nokim Explorer - Результаты поиска",
+                all: "Все", wiki: "Википедия", images: "Картинки", videos: "Видео", news: "Новости",
+                loading: "Поиск...",
+                noResults: "Результатов не найдено 😕",
+                stats: (count, time) => `Результатов: примерно ${count} (${time} сек.)`,
+                about: "О нас", privacy: "Конфиденциальность", terms: "Условия",
+                dir: "ltr"
+            },
+            tr: {
+                title: "Nokim Explorer - Arama Sonuçları",
+                all: "Tümü", wiki: "Vikipedi", images: "Görseller", videos: "Videolar", news: "Haberler",
+                loading: "Aranıyor...",
+                noResults: "Sonuç bulunamadı 😕",
+                stats: (count, time) => `Yaklaşık ${count} sonuç bulundu (${time}s)`,
+                about: "Hakkında", privacy: "Gizlilik", terms: "Şartlar",
+                dir: "ltr"
+            },
+            zh: {
+                title: "Nokim Explorer - 搜索结果",
+                all: "全部", wiki: "维基百科", images: "图片", videos: "视频", news: "新闻",
+                loading: "正在搜索...",
+                noResults: "未找到结果 😕",
+                stats: (count, time) => `约有 ${count} 项结果 (${time}秒)`,
+                about: "关于", privacy: "隐私", terms: "条款",
+                dir: "ltr"
+            }
+        };
 
-        // خواندن پارامتر q از URL به هنگام لود صفحه
+        let currentLang = 'fa';
+        let currentQuery = '';
+        let currentActiveTab = 'all';
+
+        // مقداردهی اولیه هنگام لود صفحه
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const q = urlParams.get('q');
-            if (q) {
-                currentQuery = q.trim();
-                document.getElementById('searchInput').value = currentQuery;
-                runSearchEngine(currentQuery, currentTab);
-            } else {
-                document.getElementById('resultsList').innerHTML = '<div style="color: #70757a;">لطفاً عبارتی را برای جستجو وارد کنید.</div>';
+            currentQuery = urlParams.get('q') || '';
+            currentLang = urlParams.get('lang') || 'fa';
+
+            document.getElementById('searchInput').value = currentQuery;
+            document.getElementById('langSelector').value = currentLang;
+
+            updateUILanguage();
+
+            if (currentQuery) {
+                executeSearch(currentQuery);
             }
         });
 
-        // ارسال فرم جستجو
-        function performSearch(e) {
-            e.preventDefault();
-            const val = document.getElementById('searchInput').value.trim();
-            if (val) {
-                window.location.href = `results.html?q=${encodeURIComponent(val)}`;
-            }
+        function updateUILanguage() {
+            const t = i18n[currentLang] || i18n.fa;
+            document.getElementById('htmlRoot').setAttribute('dir', t.dir);
+            document.getElementById('htmlRoot').setAttribute('lang', currentLang);
+            document.getElementById('pageTitle').innerText = `${currentQuery ? currentQuery + ' - ' : ''}${t.title}`;
+            
+            document.getElementById('tabAll').innerText = t.all;
+            document.getElementById('tabWiki').innerText = t.wiki;
+            document.getElementById('tabImages').innerText = t.images;
+            document.getElementById('tabVideos').innerText = t.videos;
+            document.getElementById('tabNews').innerText = t.news;
+            document.getElementById('loadingText').innerText = t.loading;
+            
+            document.getElementById('footerAbout').innerText = t.about;
+            document.getElementById('footerPrivacy').innerText = t.privacy;
+            document.getElementById('footerTerms').innerText = t.terms;
         }
 
-        // تغییر تب‌ها
-        function switchTab(tabName, element) {
-            document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-            currentTab = tabName;
-            
+        function changeLanguage() {
+            currentLang = document.getElementById('langSelector').value;
+            updateUILanguage();
             if (currentQuery) {
-                runSearchEngine(currentQuery, currentTab);
+                // به‌روزرسانی URL و اجرای مجدد جستجو با زبان جدید
+                const newUrl = `results.html?q=${encodeURIComponent(currentQuery)}&lang=${currentLang}`;
+                window.history.pushState({path: newUrl}, '', newUrl);
+                executeSearch(currentQuery);
             }
         }
 
-        // موتور اصلی مدیریت منابع جستجو
-        async function runSearchEngine(query, tab) {
-            const resultsContainer = document.getElementById('resultsList');
-            const notice = document.getElementById('statusNotice');
-            
-            resultsContainer.innerHTML = '<div style="color: #70757a; margin-top: 20px;">در حال جستجو...</div>';
-            notice.style.display = 'none';
-
-            if (tab === 'wiki') {
-                // جستجو فقط در ویکی‌پدیا
-                notice.style.display = 'block';
-                notice.innerText = 'نتایج مستقیماً از ویکی‌پدیا فارسی دریافت شد.';
-                const wikiResults = await fetchWikipedia(query);
-                renderResults(wikiResults);
-            } else if (tab === 'all') {
-                // تب همه: ترکیب نتایج وب (DuckDuckGo) و ویکی‌پدیا
-                notice.style.display = 'block';
-                notice.innerText = 'نتایج از وب و ویکی‌پدیا دریافت شد.';
-                
-                const webResults = await fetchDuckDuckGoWithProxies(query);
-                const wikiResults = await fetchWikipedia(query);
-                
-                // ادغام نتایج (ابتدا چند مورد ویکی و سپس وب)
-                const combined = [...wikiResults.slice(0, 3), ...webResults];
-                renderResults(combined);
-            } else {
-                // برای تصاویر و ویدیوها فعلاً پیام آزمایشی
-                notice.style.display = 'none';
-                resultsContainer.innerHTML = `<div style="color: #70757a; margin-top: 20px;">بخش ${elementText(tab)} در حال توسعه است...</div>`;
+        function handleNewSearch(e) {
+            e.preventDefault();
+            const q = document.getElementById('searchInput').value.trim();
+            if (q) {
+                currentQuery = q;
+                const newUrl = `results.html?q=${encodeURIComponent(q)}&lang=${currentLang}`;
+                window.history.pushState({path: newUrl}, '', newUrl);
+                executeSearch(q);
             }
         }
 
-        // تابع دریافت اطلاعات از ویکی‌پدیا فارسی (بدون نیاز به پروکسی و کاملاً امن)
-        async function fetchWikipedia(query) {
-            const url = `https://fa.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=8&namespace=0&format=json&origin=*`;
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                const titles = data[1];
-                const descriptions = data[2];
-                const links = data[3];
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            currentActiveTab = tabName;
 
-                let results = [];
-                for (let i = 0; i < titles.length; i++) {
-                    results.push({
-                        title: titles[i],
-                        snippet: descriptions[i] || 'مقاله مربوط در ویکی‌پدیا موجود است.',
-                        url: links[i]
-                    });
-                }
-                return results;
-            } catch (err) {
-                console.error("خطا در ارتباط با ویکی‌پدیا:", err);
-                return [];
-            }
-        }
-
-        // تابع دریافت نتایج وب با زنجیره پروکسی‌ها (Fallback)
-        async function fetchDuckDuckGoWithProxies(query) {
-            const targetUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
-            const proxies = [
-                `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
-                `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
-                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
-            ];
-
-            for (let proxyUrl of proxies) {
-                try {
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) continue;
-                    const htmlText = await response.text();
-                    
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(htmlText, 'text/html');
-                    const items = doc.querySelectorAll('.result');
-                    
-                    let results = [];
-                    items.forEach(item => {
-                        const titleEl = item.querySelector('.result__a') || item.querySelector('[data-testid="result-title-a"]');
-                        const snippetEl = item.querySelector('.result__snippet');
-                        
-                        if (titleEl) {
-                            results.push({
-                                title: titleEl.textContent.trim(),
-                                snippet: snippetEl ? snippetEl.textContent.trim() : '',
-                                url: titleEl.getAttribute('href') || '#'
-                            });
-                        }
-                    });
-
-                    if (results.length > 0) {
-                        return results;
-                    }
-                } catch (e) {
-                    console.warn("پروکسی ناموفق بود، تلاش با بعدی...", e);
+            if (currentQuery) {
+                if (tabName === 'wiki') {
+                    fetchWikipediaResults(currentQuery);
+                } else if (tabName === 'images') {
+                    renderPlaceholderMessage(`🖼️ تصاویر برای "${currentQuery}" (به‌زودی...)`);
+                } else if (tabName === 'videos') {
+                    renderPlaceholderMessage(`🎬 ویدیوها برای "${currentQuery}" (به‌زودی...)`);
+                } else if (tabName === 'news') {
+                    renderPlaceholderMessage(`📰 اخبار برای "${currentQuery}" (به‌زودی...)`);
+                } else {
+                    executeSearch(currentQuery);
                 }
             }
-            return [];
         }
 
-        // رندر کردن کارت‌های نتیجه در صفحه
-        function renderResults(results) {
-            const container = document.getElementById('resultsList');
-            if (!results || results.length === 0) {
-                container.innerHTML = '<div style="color: #70757a; margin-top: 20px;">هیچ نتیجه‌ای یافت نشد.</div>';
+        function renderPlaceholderMessage(msg) {
+            document.getElementById('resultStats').innerText = '';
+            document.getElementById('resultList').innerHTML = `<div class="no-results" style="font-size:18px;">${msg}</div>`;
+        }
+
+        // تابع اصلی اجرای جستجو با پراکسی‌های چندگانه
+        async function executeSearch(query) {
+            const startTime = performance.now();
+            const loadingEl = document.getElementById('loading');
+            const resultListEl = document.getElementById('resultList');
+            const statsEl = document.getElementById('resultStats');
+
+            loadingEl.style.display = 'block';
+            resultListEl.innerHTML = '';
+            statsEl.innerText = '';
+
+            if (currentActiveTab === 'wiki') {
+                fetchWikipediaResults(query);
                 return;
             }
 
-            let html = '';
-            results.forEach(item => {
-                html += `
-                    <div class="result-card">
-                        <div class="result-url">${escapeHtml(item.url)}</div>
-                        <a href="${escapeHtml(item.url)}" target="_blank" class="result-title">${escapeHtml(item.title)}</a>
-                        <div class="result-snippet">${escapeHtml(item.snippet)}</div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
+            let resultsHtml = '';
+
+            try {
+                // مرحله ۱: تلاش برای دریافت از طریق DuckDuckGo HTML و پروکسی‌های کمکی
+                const targetUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+                const htmlText = await fetchWithProxies(targetUrl);
+
+                if (htmlText) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlText, 'text/html');
+                    const items = doc.querySelectorAll('.result');
+
+                    if (items.length > 0) {
+                        let count = 0;
+                        items.forEach(item => {
+                            const titleEl = item.querySelector('.result__title');
+                            const snippetEl = item.querySelector('.result__snippet');
+                            const urlEl = item.querySelector('.result__url');
+
+                            if (titleEl && snippetEl) {
+                                const title = titleEl.textContent.trim();
+                                const link = titleEl.querySelector('a')?.href || '#';
+                                const snippet = snippetEl.textContent.trim();
+                                const displayUrl = urlEl ? urlEl.textContent.trim() : link;
+
+                                resultsHtml += `
+                                    <div class="result-item">
+                                        <a href="${link}" class="result-url" target="_blank">${displayUrl}</a>
+                                        <a href="${link}" class="result-title" target="_blank">${title}</a>
+                                        <div class="result-snippet">${snippet}</div>
+                                    </div>
+                                `;
+                                count++;
+                            }
+                        });
+
+                        if (resultsHtml) {
+                            const endTime = performance.now();
+                            const duration = ((endTime - startTime) / 1000).toFixed(2);
+                            const t = i18n[currentLang] || i18n.fa;
+                            statsEl.innerText = t.stats(count * 12, duration);
+                            resultListEl.innerHTML = resultsHtml;
+                            loadingEl.style.display = 'none';
+                            return;
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Proxy search fallback triggered:', err);
+            }
+
+            // اگر نتیجه‌ای پیدا نشد
+            loadingEl.style.display = 'none';
+            const t = i18n[currentLang] || i18n.fa;
+            resultListEl.innerHTML = `<div class="no-results">${t.noResults}</div>`;
         }
 
-        // تابع کمکی برای جلوگیری از خطاهای اسکریپتی (امنیت XSS)
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/&/g, "&amp;")
-                      .replace(/</g, "&lt;")
-                      .replace(/>/g, "&gt;")
-                      .replace(/"/g, "&quot;")
-                      .replace(/'/g, "&#039;");
+        // سیستم فال‌بک پروکسی‌های CORS
+        async function fetchWithProxies(targetUrl) {
+            const proxies = [
+                (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+                (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+            ];
+
+            for (const getProxyUrl of proxies) {
+                try {
+                    const response = await fetch(getProxyUrl(targetUrl));
+                    if (response.ok) {
+                        const text = await response.text();
+                        if (text && text.length > 100) return text;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+            return null;
         }
 
-        function elementText(tab) {
-            if (tab === 'images') return 'تصاویر';
-            if (tab === 'videos') return 'ویدیو';
-            return '';
+        // جستجوی اختصاصی ویکی‌پدیا متناسب با زبان انتخابی کاربر
+        async function fetchWikipediaResults(query) {
+            const loadingEl = document.getElementById('loading');
+            const resultListEl = document.getElementById('resultList');
+            const statsEl = document.getElementById('resultStats');
+
+            loadingEl.style.display = 'block';
+            resultListEl.innerHTML = '';
+            statsEl.innerText = '';
+
+            const wikiLang = ['fa', 'en', 'ru', 'tr', 'zh'].includes(currentLang) ? currentLang : 'en';
+            const wikiApiUrl = `https://${wikiLang}.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=10&namespace=0&format=json&origin=*`;
+
+            try {
+                const response = await fetch(wikiApiUrl);
+                const data = await response.json();
+                loadingEl.style.display = 'none';
+
+                const titles = data[1] || [];
+                const descriptions = data[2] || [];
+                const urls = data[3] || [];
+
+                if (titles.length === 0) {
+                    const t = i18n[currentLang] || i18n.fa;
+                    resultListEl.innerHTML = `<div class="no-results">${t.noResults}</div>`;
+                    return;
+                }
+
+                statsEl.innerText = `Wikipedia (${titles.length} results)`;
+                let html = '';
+                for (let i = 0; i < titles.length; i++) {
+                    html += `
+                        <div class="result-item">
+                            <a href="${urls[i]}" class="result-url" target="_blank">${urls[i]}</a>
+                            <a href="${urls[i]}" class="result-title" target="_blank">${titles[i]}</a>
+                            <div class="result-snippet">${descriptions[i] || ''}</div>
+                        </div>
+                    `;
+                }
+                resultListEl.innerHTML = html;
+            } catch (err) {
+                loadingEl.style.display = 'none';
+                resultListEl.innerHTML = `<div class="no-results">خطا در بارگذاری اطلاعات ویکی‌پدیا</div>`;
+            }
         }
     </script>
 </body>
-</html>
+        </html>
+    
 
  
