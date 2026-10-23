@@ -17,14 +17,14 @@
             line-height: 1.6;
             font-size: 14px;
             display: flex;
+            min-height: 100vh;
         }
-        /* سایدبار سمت راست (منوها، جعبه اطلاعات و موزیک سیرک) */
         aside {
             width: 280px;
             background-color: #f8f9fa;
             border-left: 1px solid #a2a9b1;
             padding: 20px;
-            min-height: 100vh;
+            flex-shrink: 0;
         }
         .wiki-logo-box {
             text-align: center;
@@ -38,6 +38,7 @@
             height: 120px;
             border-radius: 8px;
             margin-bottom: 10px;
+            object-fit: contain;
         }
         .wiki-logo-box .company-en-title {
             font-weight: bold;
@@ -67,8 +68,6 @@
         .sidebar-menu ul li a:hover {
             text-decoration: underline;
         }
-        
-        /* بخش موزیک سیرک دیجیتال */
         .circus-box {
             background: #fff3cd;
             border: 1px solid #ffeeba;
@@ -86,8 +85,6 @@
             width: 100%;
             height: 32px;
         }
-
-        /* محتوای اصلی مقاله */
         main {
             flex: 1;
             padding: 30px 50px;
@@ -136,8 +133,6 @@
             margin-bottom: 15px;
             text-align: justify;
         }
-        
-        /* فوتر ویکی‌پدیا */
         footer {
             margin-top: 50px;
             border-top: 1px solid #a2a9b1;
@@ -149,11 +144,10 @@
 </head>
 <body>
 
-    <!-- سایدبار مشابه ویکی‌پدیا -->
     <aside>
         <div class="wiki-logo-box">
-            <img src="IMG_20261023_121722_544.jpg" alt="Nokim Logo">
-            <div class="company-en-title">Nokim Company</div>
+            <img src="h" alt="Nokim Logo">
+            <div class="company-en-title">NOKIM Corporation</div>
         </div>
         
         <div class="sidebar-menu">
@@ -174,26 +168,25 @@
                 <li><a href="#">بحث و گفتگو</a></li>
             </ul>
         </div>
-        <!-- ویجت موزیک که حالا سعی می‌کنه خودش شروع بشه! -->
+
+        <!-- ویجت موزیک با پخش خودکار -->
         <div class="circus-box">
-            <h4>موسیقی<h4>
+            <h4> موسیقی </h4>
             <audio controls loop autoplay>
                 <source src="the-amazing-digital-circus-main-theme-orchestral.mp3" type="audio/mpeg">
-                مرورگر شما از پخش خودکار پشتیبانی نمی‌کند، باید دستی پخش کنید.
+                مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
             </audio>
         </div>
+    </aside>
 
-
-    <!-- محتوای اصلی مقاله دانشنامه -->
     <main>
         <h1>شرکت نوکیم</h1>
-        <div class="subtitle-en">از ویکی‌پدیا، دانشنامهٔ آزاد (Nokim Company)</div>
+        <div class="subtitle-en">دربارهNOKIM Corporation</div>
 
         <p>
             <strong>شرکت نوکیم</strong> یک نهاد پیشرو در زمینه توسعه فناوری‌های نرم‌افزاری، سیستم‌عامل‌های اختصاصی و راهکارهای امنیتی است که با هدف ساختارشکنی در استانداردهای سنتی کامپیوتر بنیان‌گذاری شده است.
         </p>
 
-        <!-- فهرست مطالب (TOC) -->
         <div class="toc">
             <strong>محتویات</strong>
             <ul>
@@ -206,7 +199,7 @@
 
         <h2 id="intro">۱ معرفی شرکت</h2>
         <p>
-            شرکت نوکیم (به انگلیسی: Nokim Company) در دنیای فناوری به عنوان خالق ابزارهای قدرتمند و سیستم‌عامل‌های نوین شناخته می‌شود. این شرکت با تمرکز بر توسعه نرم‌افزارهای دسکتاپ، مرورگرهای وب اختصاصی و پروتکل‌های ارتباطی، توانسته جایگاه ویژه‌ای در میان توسعه‌دهندگان مستقل پیدا کند.
+            شرکت نوکیم (به انگلیسی: NOKIM Corporation) در دنیای فناوری به عنوان خالق ابزارهای قدرتمند و سیستم‌عامل‌های نوین شناخته می‌شود. این شرکت با تمرکز بر توسعه نرم‌افزارهای دسکتاپ، مرورگرهای وب اختصاصی و پروتکل‌های ارتباطی، توانسته جایگاه ویژه‌ای در میان توسعه‌دهندگان مستقل پیدا کند.
         </p>
 
         <h2 id="history">۲ تاریخچه و پیدایش</h2>
@@ -225,7 +218,7 @@
         </p>
 
         <footer>
-            <p>&copy; ۲۰۲۶ نوکیم (Nokim). متن تحت پروانه کریتیو کامانز ارجاع-همسان‌مانند ارائه شده است. تمامی حقوق محفوظ است.</p>
+            <p>&copy;© 2026 NOKIM Corporation. All rights reserved.</p>
         </footer>
     </main>
 
