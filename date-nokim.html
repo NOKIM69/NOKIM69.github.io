@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">تاریخ‌نوکیم | جستجوگر هوشمند تاریخ</title>
+    <style>
+        :root {
+            --bg-color: #fcfbfa;
+            --card-bg: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #555555;
+            --accent-color: #005f73;
+            --accent-hover: #0a9396;
+            --border-color: #e0dcd0;
+        }
+
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            letter-spacing: -1px;
+        }
+
+        .world-clocks {
+            display: flex;
+            gap: 1.2rem;
+            background: var(--bg-color);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .clock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .clock-item .city {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .clock-item .time {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            min-height: 60vh;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.85rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1.1rem;
+            outline: none;
+            background: #fff;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .search-box button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0 1.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .search-box button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        #results {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .result-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .result-card h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+
+        .result-card h3 a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .result-card h3 a:hover {
+            text-decoration: underline;
+        }
+
+        .result-card p {
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        .loading, .no-result {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem;
+            font-size: 1.1rem;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+            background: var(--card-bg);
+            padding: 2rem 1rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .languages-bar {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .languages-bar span {
+            cursor: pointer;
+            transition: color 0.2s;
+            font-weight: bold;
+        }
+
+        .languages-bar span:hover {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-section">
+            <div class="logo">NOKIM History</div>
+            <div id="subTitle" style="color: var(--text-muted); font-size: 0.8rem;">موتور جستجوی هوشمند تاریخ</div>
+        </div>
+
+        <div class="world-clocks">
+            <div class="clock-item">
+                <span class="city" id="city-tehran">تهران (ایران)</span>
+                <span class="time" id="clock-tehran">--:--:--</span>
+            </div>
+            <div class="clock-item">
+                <span class="city" id="city-london">لندن (انگلیس)</span>
+                <span class="time" id="clock-london">--:--:--</span>
+            </div>
+            <div class="clock-item">
+                <span class="city" id="city-moscow">مسکو (روسیه)</span>
+                <span class="time" id="clock-moscow">--:--:--</span>
+            </div>
+            <div class="clock-item">
+                <span class="city" id="city-istanbul">استانبول (ترکیه)</span>
+                <span class="time" id="clock-istanbul">--:--:--</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="جستجوی رویداد، شخصیت یا واقعه تاریخی..." autofocus>
+            <button id="searchBtn" onclick="searchHistory()">جستجو در تاریخ</button>
+        </div>
+
+        <div id="results">
+            <div id="initMsg" class="no-result">کلمه‌ای را برای کاوش در تاریخ جستجو کنید...</div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="languages-bar">
+                <span onclick="setLanguage('fa')">فارسی</span>
+                <span onclick="setLanguage('en')">English</span>
+                <span onclick="setLanguage('ru')">Русский</span>
+                <span onclick="setLanguage('tr')">Türkçe</span>
+            </div>
+            <div id="footerText">
+                 © 2026 NOKIM Corporation. All rightsreserved. | قدرت‌گرفته از API آزاد ویکی‌پدیا
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // دیکشنری چندزبانه
+        const translations = {
+            fa: {
+                dir: 'rtl',
+                title: 'تاریخ‌نوکیم | جستجوگر هوشمند تاریخ',
+                subTitle: 'موتور جستجوی هوشمند تاریخ',
+                placeholder: 'جستجوی رویداد، شخصیت یا واقعه تاریخی (مثلاً: کوروش، انقلاب ۵۷، جنگ جهانی)...',
+                searchBtn: 'جستجو در تاریخ',
+                initMsg: 'کلمه‌ای را برای کاوش در تاریخ جستجو کنید...',
+                loading: 'در حال کاوش در اعماق تاریخ... ⏳',
+                noResult: 'چیزی در اعماق تاریخ با این مشخصات پیدا نکردیم! 🕵️‍♂️',
+                error: 'خطا در ارتباط با سرورهای تاریخ! اتصال اینترنت رو چک کن. 🔌',
+                footer: ' © 2026 NOKIM Corporation. All rights reserved. | قدرت‌گرفته از API آزاد ویکی‌پدیا',
+                wikiLang: 'fa',
+                cities: { tehran: 'تهران (ایران)', london: 'لندن (انگلیس)', moscow: 'مسکو (روسیه)', istanbul: 'استانبول (ترکیه)' }
+            },
+            en: {
+                dir: 'ltr',
+                title: 'NOKIM History | Smart History Search Engine',
+                subTitle: 'Smart Historical Search Engine',
+                placeholder: 'Search historical events, figures, or eras (e.g., Cyrus, World War)...',
+                searchBtn: 'Search History',
+                initMsg: 'Type a keyword to explore history...',
+                loading: 'Exploring the depths of history... ⏳',
+                noResult: 'Nothing found in history matching this query! 🕵️‍♂️',
+                error: 'Error connecting to history servers! Check your internet connection. 🔌',
+                footer: ' © 2026 NOKIM Corporation. All rights reserved. | Powered by Wikipedia Free API',
+                wikiLang: 'en',
+                cities: { tehran: 'Tehran (Iran)', london: 'London (UK)', moscow: 'Moscow (Russia)', istanbul: 'Istanbul (Turkey)' }
+            },
+            ru: {
+                dir: 'ltr',
+                title: 'NOKIM History | Умная поисковая система истории',
+                subTitle: 'Умный исторический поисковик',
+                placeholder: 'Поиск исторических событий или личностей (например: Петр I, Война)...',
+                searchBtn: 'Искать в истории',
+                initMsg: 'Введите ключевое слово для исследования истории...',
+                loading: 'Исследование глубин истории... ⏳',
+                noResult: 'Ничего не найдено в истории по вашему запросу! 🕵️‍♂️',
+                error: 'Ошибка подключения к серверам истории! Проверьте интернет. 🔌',
+                footer: ' © 2026 NOKIM Corporation. All rights reserved. | На базе Википедии',
+                wikiLang: 'ru',
+                cities: { tehran: 'Тегеран (Иран)', london: 'Лондон (Великобритания)', moscow: 'Москва (Россия)', istanbul: 'Стамбул (Турция)' }
+            },
+            tr: {
+                dir: 'ltr',
+                title: 'NOKIM History | Akıllı Tarih Arama Motoru',
+                subTitle: 'Akıllı Tarih Arama Motoru',
+                placeholder: 'Tarihi olayları veya kişileri arayın (örn: Osmanlı, Atatürk)...',
+                searchBtn: 'Tarihte Ara',
+                initMsg: 'Tarihi keşfetmek için bir anahtar kelime girin...',
+                loading: 'Tarihin derinlikleri keşfediliyor... ⏳',
+                noResult: 'Tarihte bu bilgilere uygun bir şey bulamadık! 🕵️‍♂️',
+                error: 'Tarih sunucularıyla bağlantı hatası! İnternetinizi kontrol edin. 🔌',
+                footer: '© 2026 NOKIM Corporation. All rights reserved. | Wikipedia Özgür API altyapısıyla',
+                wikiLang: 'tr',
+                cities: { tehran: 'Tahran (İran)', london: 'Londra (İngiltere)', moscow: 'Moskova (Rusya)', istanbul: 'İstanbul (Türkiye)' }
+            }
+        };
+
+        let currentLang = 'fa';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+
+            document.getElementById('htmlRoot').setAttribute('lang', lang);
+            document.getElementById('htmlRoot').setAttribute('dir', t.dir);
+            document.getElementById('pageTitle').innerText = t.title;
+            document.getElementById('subTitle').innerText = t.subTitle;
+            document.getElementById('searchInput').placeholder = t.placeholder;
+            document.getElementById('searchBtn').innerText = t.searchBtn;
+            document.getElementById('initMsg').innerText = t.initMsg;
+            document.getElementById('footerText').innerText = t.footer;
+
+            document.getElementById('city-tehran').innerText = t.cities.tehran;
+            document.getElementById('city-london').innerText = t.cities.london;
+            document.getElementById('city-moscow').innerText = t.cities.moscow;
+            document.getElementById('city-istanbul').innerText = t.cities.istanbul;
+        }
+
+        // به‌روزرسانی زنده‌ی ساعت‌ها
+        function updateClocks() {
+            const options = { timeZone: 'Asia/Tehran', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.querySelectorAll('#clock-tehran').forEach(el => el.innerText = new Intl.DateTimeFormat([], options).format(new Date()));
+
+            options.timeZone = 'Europe/London';
+            document.querySelectorAll('#clock-london').forEach(el => el.innerText = new Intl.DateTimeFormat([], options).format(new Date()));
+
+            options.timeZone = 'Europe/Moscow';
+            document.querySelectorAll('#clock-moscow').forEach(el => el.innerText = new Intl.DateTimeFormat([], options).format(new Date()));
+
+            options.timeZone = 'Europe/Istanbul';
+            document.querySelectorAll('#clock-istanbul').forEach(el => el.innerText = new Intl.DateTimeFormat([], options).format(new Date()));
+        }
+
+        setInterval(updateClocks, 1000);
+        updateClocks();
+
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchHistory();
+            }
+        });
+
+        async function searchHistory() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsContainer = document.getElementById('results');
+            const t = translations[currentLang];
+
+            if (!query) return;
+
+            resultsContainer.innerHTML = `<div class="loading">${t.loading}</div>`;
+
+            // اتصال هوشمند به زبان انتخاب شده‌ی ویکی‌پدیا (fa, en, ru, tr)
+            const apiURL = `https://${t.wikiLang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*`;
+
+            try {
+                const response = await fetch(apiURL);
+                const data = await response.json();
+                const searchResults = data.query.search;
+
+                if (searchResults.length === 0) {
+                    resultsContainer.innerHTML = `<div class="no-result">${t.noResult}</div>`;
+                    return;
+                }
+
+                resultsContainer.innerHTML = '';
+
+                searchResults.forEach(item => {
+                    let snippet = item.snippet.replace(/(<([^>]+)>)/gi, "");
+                    let pageTitle = item.title;
+                    let pageURL = `https://${t.wikiLang}.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}`;
+
+                    const card = document.createElement('div');
+                    card.className = 'result-card';
+                    card.innerHTML = `
+                        <h3><a href="${pageURL}" target="_blank">${pageTitle}</a></h3>
+                        <p>${snippet}...</p>
+                    `;
+                    resultsContainer.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error(error);
+                resultsContainer.innerHTML = `<div class="no-result">${t.error}</div>`;
+            }
+        }
+    </script>
+
+</body>
+</html>
