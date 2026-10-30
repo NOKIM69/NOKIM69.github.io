@@ -2,489 +2,517 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 
-  <title>Nokim Explorer</title>
+<!-- سازگاری با گوشی‌های قدیمی -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="icon" href="NOKIM2026.ico" type="image/x-icon">
+<meta name="HandheldFriendly" content="true">
+<meta name="MobileOptimized" content="240">
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<title>Nokim Explorer</title>
 
-    html {
-      width: 100%;
-      min-height: 100%;
-    }
+<link rel="icon" href="NOKIM2026.ico" type="image/x-icon">
 
-    body {
-      width: 100%;
-      min-width: 0;
-      min-height: 100vh;
-      min-height: 100dvh;
-      font-family: Arial, sans-serif;
-      background: #fff;
-      color: #202124;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-    }
+<style>
+/* تنظیمات پایه */
+* {
+  box-sizing: border-box;
+}
 
-    .header {
-      width: 100%;
-      display: flex;
-      justify-content: flex-end;
-      padding: 8px 14px;
-    }
+html {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
-    .header a {
-      color: #202124;
-      text-decoration: none;
-      font-size: 14px;
-      padding: 12px 8px;
-    }
+body {
+  width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #202124;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  overflow-x: hidden;
+}
 
-    .header a:hover {
-      text-decoration: underline;
-    }
+/* سربرگ */
+.header {
+  width: 100%;
+  min-height: 45px;
+  padding: 6px 10px;
+  text-align: right;
+}
 
-    .main-content {
-      flex: 1;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px 70px;
-    }
+.header a {
+  display: inline-block;
+  padding: 10px 8px;
+  color: #202124;
+  text-decoration: none;
+}
 
-    .logo-text {
-      max-width: 100%;
-      margin-bottom: 28px;
-      color: #3c4043;
-      font-size: clamp(34px, 9vw, 72px);
-      font-weight: bold;
-      letter-spacing: -1.5px;
-      text-align: center;
-      overflow-wrap: anywhere;
-      user-select: none;
-    }
+/* محتوای اصلی */
+.main-content {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 40px 12px 35px;
+  text-align: center;
+}
 
-    .search-box {
-      width: 100%;
-      max-width: 584px;
-    }
+/* لوگو */
+.logo-text {
+  width: 100%;
+  margin: 0 auto 28px;
+  color: #3c4043;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 56px;
+  font-weight: bold;
+  letter-spacing: -2px;
+  text-align: center;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
 
-    .search-container {
-      width: 100%;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      padding: 0 14px;
-      border: 1px solid #dadce0;
-      border-radius: 28px;
-      background: #fff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      transition: box-shadow 0.2s ease;
-    }
+/* کادر جستجو */
+.search-box {
+  width: 100%;
+  max-width: 584px;
+  margin: 0 auto;
+}
 
-    .search-container:hover,
-    .search-container:focus-within {
-      box-shadow: 0 2px 8px rgba(60, 64, 67, 0.25);
-    }
+.search-container {
+  display: table;
+  width: 100%;
+  height: 46px;
+  padding: 0 12px;
+  border: 1px solid #dadce0;
+  border-radius: 24px;
+  background: #ffffff;
+}
 
-    .search-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: 10px;
-      color: #9aa0a6;
-      flex-shrink: 0;
-    }
+.search-icon {
+  display: table-cell;
+  width: 25px;
+  vertical-align: middle;
+  text-align: center;
+  color: #9aa0a6;
+}
 
-    .search-input {
-      flex: 1;
-      width: 100%;
-      min-width: 0;
-      height: 42px;
-      border: none;
-      outline: none;
-      background: transparent;
-      color: #202124;
-      font-family: Arial, sans-serif;
-      font-size: 16px;
-    }
+.search-input {
+  display: table-cell;
+  width: 100%;
+  height: 42px;
+  padding: 0 5px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #202124;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
 
-    .search-input::placeholder {
-      color: #70757a;
-    }
+/* دکمه‌ها */
+.search-buttons {
+  width: 100%;
+  margin-top: 20px;
+  text-align: center;
+}
 
-    .search-buttons {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 22px;
-    }
+.search-buttons button {
+  display: inline-block;
+  max-width: 100%;
+  min-height: 38px;
+  margin: 4px 2px;
+  padding: 8px 12px;
+  border: 1px solid #dadce0;
+  border-radius: 5px;
+  background: #f8f9fa;
+  color: #3c4043;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+}
 
-    .search-buttons button {
-      min-height: 40px;
-      padding: 0 18px;
-      border: 1px solid #f8f9fa;
-      border-radius: 6px;
-      background: #f8f9fa;
-      color: #3c4043;
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-    }
+/* انتخاب زبان */
+.language-bar {
+  width: 100%;
+  margin-top: 28px;
+  padding: 0 4px;
+  color: #474747;
+  font-size: 12px;
+  line-height: 28px;
+  text-align: center;
+}
 
-    .search-buttons button:hover {
-      border-color: #dadce0;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    }
+.language-bar a {
+  display: inline-block;
+  margin: 0 3px;
+  color: #1a0dab;
+  text-decoration: none;
+  white-space: nowrap;
+}
 
-    .language-bar {
-      max-width: 100%;
-      margin-top: 28px;
-      padding: 0 8px;
-      color: #474747;
-      font-size: 13px;
-      line-height: 28px;
-      text-align: center;
-    }
+/* پابرگ */
+.footer {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  background: #f3f5f6;
+  text-align: center;
+  overflow-wrap: break-word;
+}
 
-    .language-bar a {
-      display: inline-block;
-      margin: 0 4px;
-      color: #1a0dab;
-      text-decoration: none;
-      white-space: nowrap;
-    }
+.footer a {
+  display: inline-block;
+  padding: 9px 12px;
+  color: #202124;
+  text-decoration: none;
+  font-size: 13px;
+}
 
-    .language-bar a:hover {
-      text-decoration: underline;
-    }
+/* نمایشگرهای متوسط */
+@media screen and (min-width: 600px) {
+  .main-content {
+    padding-top: 70px;
+  }
 
-    .footer {
-      width: 100%;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 12px 20px;
-      background: #f3f5f6;
-      color: #202124;
-      font-size: 14px;
-    }
+  .logo-text {
+    font-size: 72px;
+  }
 
-    .footer-left,
-    .footer-right {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+  .search-container {
+    height: 50px;
+  }
 
-    .footer a {
-      display: inline-block;
-      padding: 10px;
-      color: #202124;
-      text-decoration: none;
-    }
+  .search-input {
+    height: 46px;
+  }
 
-    .footer a:hover {
-      text-decoration: underline;
-    }
+  .language-bar {
+    font-size: 13px;
+  }
+}
 
-    /* تنظیمات گوشی */
-    @media (max-width: 480px) {
-      .header {
-        padding: 6px 10px;
-      }
+/* گوشی‌های باریک نوکیا و Opera Mini */
+@media screen and (max-width: 360px) {
+  .main-content {
+    padding: 25px 10px 25px;
+  }
 
-      .main-content {
-        padding: 20px 16px 40px;
-      }
+  .logo-text {
+    font-size: 32px;
+    letter-spacing: -1px;
+    margin-bottom: 22px;
+  }
 
-      .logo-text {
-        font-size: clamp(32px, 9vw, 44px);
-        letter-spacing: -1px;
-        margin-bottom: 26px;
-      }
+  .search-container {
+    height: 42px;
+    padding: 0 8px;
+  }
 
-      .search-container {
-        height: 46px;
-        padding: 0 12px;
-      }
+  .search-input {
+    height: 38px;
+    font-size: 16px;
+  }
 
-      .search-buttons {
-        gap: 8px;
-        margin-top: 18px;
-      }
+  .search-buttons {
+    margin-top: 14px;
+  }
 
-      .search-buttons button {
-        padding: 0 12px;
-        font-size: 13px;
-      }
+  .search-buttons button {
+    width: 100%;
+    min-height: 36px;
+    margin: 4px 0;
+    padding: 7px 5px;
+  }
 
-      .language-bar {
-        margin-top: 22px;
-        font-size: 12px;
-      }
+  .language-bar {
+    margin-top: 20px;
+    font-size: 12px;
+    line-height: 26px;
+  }
 
-      .footer {
-        justify-content: center;
-        padding: 8px;
-        font-size: 13px;
-      }
+  .footer {
+    padding: 8px 4px;
+  }
+}
 
-      .footer-left,
-      .footer-right {
-        justify-content: center;
-      }
+/* گوشی‌های بسیار قدیمی */
+@media screen and (max-width: 260px) {
+  .main-content {
+    padding-right: 6px;
+    padding-left: 6px;
+  }
 
-      .footer a {
-        padding: 8px;
-      }
-    }
+  .logo-text {
+    font-size: 26px;
+  }
 
-    /* گوشی‌های بسیار کوچک */
-    @media (max-width: 350px) {
-      .main-content {
-        padding-right: 12px;
-        padding-left: 12px;
-      }
+  .search-container {
+    padding: 0 5px;
+  }
 
-      .logo-text {
-        font-size: 30px;
-      }
-
-      .search-buttons {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .search-buttons button {
-        width: 100%;
-      }
-    }
-  </style>
+  .language-bar a {
+    margin: 0 2px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <header class="header">
-    <a href="https://nokim69.github.io/about.html" data-i18n="about">
-      درباره
-    </a>
-  </header>
+<div class="header">
+  <a href="https://nokim69.github.io/about.html"
+     data-i18n="about">درباره</a>
+</div>
 
-  <main class="main-content">
+<div class="main-content">
 
-    <div class="logo-text" id="logoText">
-      Nokim Explorer
-    </div>
+  <div class="logo-text" id="logoText">
+    Nokim Explorer
+  </div>
 
-    <div class="search-box">
-      <form id="searchForm" action="results.html" method="GET">
+  <div class="search-box">
 
-        <div class="search-container">
-          <div class="search-icon" aria-hidden="true">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5
-                6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59
-                4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5z
-                M9.5 14A4.5 4.5 0 1 1 9.5 5a4.5 4.5 0 0 1 0 9z"
-                fill="currentColor"
-              />
-            </svg>
-          </div>
+    <form id="searchForm"
+          action="https://nokim69.github.io/results.html"
+          method="get">
 
-          <input
-            class="search-input"
-            id="searchInput"
-            type="search"
-            name="q"
-            placeholder="جستجو کنید ..."
-            aria-label="عبارت جستجو"
-            autocomplete="off"
-            required
-          >
-        </div>
+      <div class="search-container">
 
-        <div class="search-buttons">
-          <button type="submit" data-i18n="searchBtn">
-            جستجوی Nokim
-          </button>
+        <span class="search-icon" aria-hidden="true">
+          &#128269;
+        </span>
 
-          <button
-            type="submit"
-            name="btnI"
-            value="1"
-            data-i18n="luckyBtn"
-          >
-            احساس خوش‌شانسی می‌کنم
-          </button>
-        </div>
+        <input
+          class="search-input"
+          id="searchInput"
+          type="text"
+          name="q"
+          placeholder="جستجو کنید ..."
+          aria-label="جستجو"
+          autocomplete="off"
+          required
+        >
 
-      </form>
-    </div>
+      </div>
 
-    <div class="language-bar">
-      <span id="langLabel">
-        Nokim Explorer به این زبان ارائه می‌شود:
-      </span>
+      <div class="search-buttons">
 
-      <a href="#" data-lang="en">English</a>
-      <a href="#" data-lang="ru">Русский</a>
-      <a href="#" data-lang="tr">Türkçe</a>
-      <a href="#" data-lang="zh">中文</a>
-      <a href="#" data-lang="fa">فارسی</a>
-    </div>
+        <button type="submit" data-i18n="searchBtn">
+          جستجوی Nokim
+        </button>
 
-  </main>
+        <button type="submit"
+                name="btnI"
+                value="1"
+                data-i18n="luckyBtn">
+          احساس خوش‌شانسی می‌کنم
+        </button>
 
-  <footer class="footer">
-    <div class="footer-left">
-      <a href="https://nokim69.github.io/about.html" data-i18n="about">
-        درباره
-      </a>
-    </div>
+      </div>
 
-    <div class="footer-right">
-      <a href="https://nokim69.github.io/about.html" data-i18n="privacy">
-        حریم خصوصی
-      </a>
-    </div>
-  </footer>
+    </form>
 
-  <script>
-    const translations = {
-      fa: {
-        title: "Nokim Explorer",
-        placeholder: "جستجو کنید ...",
-        searchBtn: "جستجوی Nokim",
-        luckyBtn: "احساس خوش‌شانسی می‌کنم",
-        langLabel: "Nokim Explorer به این زبان ارائه می‌شود:",
-        about: "درباره",
-        privacy: "حریم خصوصی"
-      },
+  </div>
 
-      en: {
-        title: "Nokim Explorer",
-        placeholder: "Search...",
-        searchBtn: "Nokim Search",
-        luckyBtn: "I'm Feeling Lucky",
-        langLabel: "Nokim Explorer is offered in:",
-        about: "About",
-        privacy: "Privacy"
-      },
+  <div class="language-bar">
 
-      ru: {
-        title: "Nokim Explorer",
-        placeholder: "Поиск...",
-        searchBtn: "Поиск Nokim",
-        luckyBtn: "Мне повезёт",
-        langLabel: "Nokim Explorer доступен на следующих языках:",
-        about: "О нас",
-        privacy: "Конфиденциальность"
-      },
+    <span id="langLabel">
+      Nokim Explorer به این زبان ارائه می‌شود:
+    </span>
 
-      tr: {
-        title: "Nokim Explorer",
-        placeholder: "Arama yapın...",
-        searchBtn: "Nokim'de Ara",
-        luckyBtn: "Kendimi Şanslı Hissediyorum",
-        langLabel: "Nokim Explorer şu dillerde sunulmaktadır:",
-        about: "Hakkında",
-        privacy: "Gizlilik"
-      },
+    <br>
 
-      zh: {
-        title: "Nokim Explorer",
-        placeholder: "搜索...",
-        searchBtn: "搜索 Nokim",
-        luckyBtn: "手气不错",
-        langLabel: "Nokim Explorer 提供以下语言：",
-        about: "关于",
-        privacy: "隐私"
-      }
-    };
+    <a href="#"
+       data-lang="en">English</a>
 
-    function detectLanguage() {
-      const browserLang = (
-        navigator.language ||
-        navigator.userLanguage ||
-        "fa"
-      ).toLowerCase();
+    <a href="#"
+       data-lang="ru">Русский</a>
 
-      if (browserLang.startsWith("ru")) return "ru";
-      if (browserLang.startsWith("tr")) return "tr";
-      if (browserLang.startsWith("zh")) return "zh";
-      if (browserLang.startsWith("en")) return "en";
+    <a href="#"
+       data-lang="tr">Türkçe</a>
 
-      return "fa";
+    <a href="#"
+       data-lang="zh">中文</a>
+
+    <a href="#"
+       data-lang="fa">فارسی</a>
+
+  </div>
+
+</div>
+
+<div class="footer">
+
+  <a href="https://nokim69.github.io/about.html"
+     data-i18n="about">درباره</a>
+
+  <a href="https://nokim69.github.io/about.html"
+     data-i18n="privacy">حریم خصوصی</a>
+
+</div>
+
+<script>
+(function () {
+
+  var translations = {
+
+    fa: {
+      title: "Nokim Explorer",
+      placeholder: "جستجو کنید ...",
+      searchBtn: "جستجوی Nokim",
+      luckyBtn: "احساس خوش‌شانسی می‌کنم",
+      langLabel: "Nokim Explorer به این زبان ارائه می‌شود:",
+      about: "درباره",
+      privacy: "حریم خصوصی",
+      direction: "rtl"
+    },
+
+    en: {
+      title: "Nokim Explorer",
+      placeholder: "Search...",
+      searchBtn: "Nokim Search",
+      luckyBtn: "I'm Feeling Lucky",
+      langLabel: "Nokim Explorer is offered in:",
+      about: "About",
+      privacy: "Privacy",
+      direction: "ltr"
+    },
+
+    ru: {
+      title: "Nokim Explorer",
+      placeholder: "Поиск...",
+      searchBtn: "Поиск Nokim",
+      luckyBtn: "Мне повезёт",
+      langLabel: "Nokim Explorer доступен на языках:",
+      about: "О нас",
+      privacy: "Конфиденциальность",
+      direction: "ltr"
+    },
+
+    tr: {
+      title: "Nokim Explorer",
+      placeholder: "Поиск yapın...",
+      searchBtn: "Nokim'de Ara",
+      luckyBtn: "Kendimi Şanslı Hissediyorum",
+      langLabel: "Nokim Explorer şu dillerde sunulur:",
+      about: "Hakkında",
+      privacy: "Gizlilik",
+      direction: "ltr"
+    },
+
+    zh: {
+      title: "Nokim Explorer",
+      placeholder: "搜索...",
+      searchBtn: "搜索 Nokim",
+      luckyBtn: "手气不错",
+      langLabel: "Nokim Explorer 提供以下语言：",
+      about: "关于",
+      privacy: "隐私",
+      direction: "ltr"
     }
 
-    function applyLanguage(lang) {
-      const t = translations[lang];
+  };
 
-      if (!t) return;
+  function detectLanguage() {
+    var language = navigator.language || "fa";
+    language = language.toLowerCase();
 
-      document.documentElement.lang = lang;
-      document.documentElement.dir = lang === "fa" ? "rtl" : "ltr";
-      document.title = t.title;
+    if (language.indexOf("ru") === 0) return "ru";
+    if (language.indexOf("tr") === 0) return "tr";
+    if (language.indexOf("zh") === 0) return "zh";
+    if (language.indexOf("en") === 0) return "en";
 
-      document.getElementById("logoText").textContent = t.title;
-      document.getElementById("searchInput").placeholder = t.placeholder;
-      document.getElementById("langLabel").textContent = t.langLabel;
+    return "fa";
+  }
 
-      document.querySelectorAll("[data-i18n]").forEach(element => {
-        const key = element.dataset.i18n;
+  function applyLanguage(lang) {
 
-        if (t[key]) {
-          element.textContent = t[key];
-        }
-      });
+    var t = translations[lang];
 
+    if (!t) return;
+
+    document.documentElement.lang = lang;
+    document.documentElement.dir = t.direction;
+    document.title = t.title;
+
+    document.getElementById("logoText").innerHTML = t.title;
+
+    document.getElementById("searchInput").placeholder =
+      t.placeholder;
+
+    document.getElementById("langLabel").innerHTML =
+      t.langLabel;
+
+    var elements = document.querySelectorAll("[data-i18n]");
+    var i;
+
+    for (i = 0; i < elements.length; i++) {
+      var key = elements[i].getAttribute("data-i18n");
+
+      if (t[key]) {
+        elements[i].innerHTML = t[key];
+      }
+    }
+
+    try {
       localStorage.setItem("nokimLang", lang);
+    } catch (e) {
+      /* در مرورگرهایی که ذخیره‌سازی را محدود می‌کنند */
+    }
+  }
+
+  var links = document.querySelectorAll("[data-lang]");
+  var i;
+
+  for (i = 0; i < links.length; i++) {
+    links[i].onclick = function (event) {
+
+      if (event && event.preventDefault) {
+        event.preventDefault();
+      }
+
+      applyLanguage(this.getAttribute("data-lang"));
+
+      return false;
+    };
+  }
+
+  var savedLanguage = null;
+
+  try {
+    savedLanguage = localStorage.getItem("nokimLang");
+  } catch (e) {
+    savedLanguage = null;
+  }
+
+  if (!translations[savedLanguage]) {
+    savedLanguage = detectLanguage();
+  }
+
+  applyLanguage(savedLanguage);
+
+  document.getElementById("searchForm").onsubmit = function () {
+    var input = document.getElementById("searchInput");
+
+    if (!input.value.replace(/^\s+|\s+$/g, "")) {
+      input.focus();
+      return false;
     }
 
-    document.querySelectorAll("[data-lang]").forEach(link => {
-      link.addEventListener("click", event => {
-        event.preventDefault();
-        applyLanguage(link.dataset.lang);
-      });
-    });
+    return true;
+  };
 
-    document.getElementById("searchForm").addEventListener("submit", event => {
-      const input = document.getElementById("searchInput");
-
-      if (!input.value.trim()) {
-        event.preventDefault();
-        input.focus();
-      }
-    });
-
-    const savedLanguage = localStorage.getItem("nokimLang");
-    const initialLanguage =
-      savedLanguage && translations[savedLanguage]
-        ? savedLanguage
-        : detectLanguage();
-
-    applyLanguage(initialLanguage);
-  </script>
+})();
+</script>
 
 </body>
 </html>
+
 
