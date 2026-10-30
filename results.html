@@ -1,615 +1,1349 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl" id="htmlRoot">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Nokim Explorer - Search results</title>
-    <style>
-        :root {
-            --bg-color: #ffffff;
-            --text-color: #202124;
-            --link-color: #1a0dab;
-            --url-color: #202124;
-            --domain-color: #4d5156;
-            --snippet-color: #4d5156;
-            --border-color: #dfe1e5;
-            --hover-bg: #f8f9fa;
-            --primary-blue: #1a73e8;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff" id="themeColor">
+<meta name="description" content="Nokim Explorer - جستجوی وب">
+<title>Nokim Explorer</title>
 
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
+<style>
+:root {
+    color-scheme: light;
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --text: #202124;
+    --muted: #5f6368;
+    --border: #dadce0;
+    --blue: #1a73e8;
+    --hover: #f1f3f4;
+    --soft: #f8f9fa;
+    --shadow: 0 2px 10px rgba(60,64,67,.12);
+}
 
-        /* هدر جستجو */
-        header {
-            display: flex;
-            align-items: center;
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border-color);
-            background: #fff;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #121212;
+    --surface: #202124;
+    --text: #e8eaed;
+    --muted: #bdc1c6;
+    --border: #3c4043;
+    --blue: #8ab4f8;
+    --hover: #303134;
+    --soft: #202124;
+    --shadow: 0 2px 12px rgba(0,0,0,.25);
+}
 
-        .logo {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--primary-blue);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        .search-form {
-            display: flex;
-            align-items: center;
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 6px 16px;
-            width: 100%;
-            max-width: 600px;
-            background: #fff;
-            box-shadow: 0 1px 6px rgba(32,33,36,.08);
-        }
+html {
+    min-height: 100%;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
 
-        .search-form:hover, .search-form:focus-within {
-            box-shadow: 0 1px 6px rgba(32,33,36,.16);
-            border-color: rgba(223,225,229,0);
-        }
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    transition: background .2s, color .2s;
+}
 
-        .search-form input {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            background: transparent;
-            color: var(--text-color);
-        }
+button, input, select {
+    font: inherit;
+}
 
-        .search-icon-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            color: #5f6368;
-            padding: 0 4px;
-            display: flex;
-            align-items: center;
-        }
+button {
+    color: inherit;
+}
 
-        /* تب‌ها */
-        .tabs {
-            display: flex;
-            padding: 0 24px;
-            border-bottom: 1px solid var(--border-color);
-            gap: 24px;
-            background: #fff;
-            font-size: 14px;
-        }
+a {
+    color: var(--blue);
+}
 
-        .tab {
-            padding: 12px 4px;
-            cursor: pointer;
-            color: #5f6368;
-            border-bottom: 3px solid transparent;
-            user-select: none;
-        }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+}
 
-        .tab.active {
-            color: var(--primary-blue);
-            border-bottom-color: var(--primary-blue);
-            font-weight: bold;
-        }
+/* نوار بالایی */
 
-        /* محتوای اصلی نتایج */
-        .main-container {
-            max-width: 700px;
-            margin: 20px 24px;
-        }
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px max(16px, env(safe-area-inset-right));
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
 
-        .result-stats {
-            font-size: 13px;
-            color: #70757a;
-            margin-bottom: 16px;
-        }
+.logo {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 7px;
+    text-decoration: none;
+    color: var(--blue);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -.7px;
+}
 
-        .result-item {
-            margin-bottom: 26px;
-        }
+.logo-mark {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    background: var(--blue);
+    color: #fff;
+    font-size: 20px;
+}
 
-        /* استایل سایت گوگل‌وار برای آدرس و فاوایکن */
-        .result-site-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 4px;
-        }
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-inline-start: auto;
+}
 
-        .result-favicon {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            object-fit: contain;
-        }
+.icon-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    font-size: 21px;
+}
 
-        .result-url-block {
-            display: flex;
-            flex-direction: column;
-        }
+.icon-button:hover {
+    background: var(--hover);
+}
 
-        .result-domain {
-            font-size: 12px;
-            color: var(--domain-color);
-            line-height: 1.2;
-        }
+/* بخش جستجو */
 
-        .result-url {
-            font-size: 11px;
-            color: #70757a;
-            text-decoration: none;
-            word-break: break-all;
-            line-height: 1.2;
-        }
+.search-area {
+    width: min(100% - 32px, 760px);
+    margin: 30px auto 20px;
+}
 
-        .result-title {
-            font-size: 20px;
-            color: var(--link-color);
-            text-decoration: none;
-            display: block;
-            margin-bottom: 3px;
-            line-height: 1.3;
-        }
+.search-heading {
+    margin: 0 0 18px;
+    text-align: center;
+    font-size: clamp(25px, 5vw, 36px);
+    font-weight: 750;
+    letter-spacing: -.8px;
+}
 
-        .result-title:hover {
-            text-decoration: underline;
-        }
+.search-heading span {
+    color: var(--blue);
+}
 
-        .result-snippet {
-            font-size: 14px;
-            color: var(--snippet-color);
-            line-height: 1.58;
-        }
+.search-subtitle {
+    margin: -9px 0 22px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+}
 
-        /* لودینگ و خطاها */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            font-size: 16px;
-            color: #5f6368;
-        }
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 54px;
+    padding: 5px 8px 5px 7px;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
 
-        .spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 12px auto;
-        }
+.search-form:focus-within {
+    border-color: var(--blue);
+    box-shadow: 0 2px 12px rgba(26,115,232,.12);
+}
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+.search-symbol {
+    padding-inline-start: 9px;
+    color: var(--muted);
+    font-size: 21px;
+}
 
-        .no-results {
-            text-align: center;
-            padding: 40px;
-            color: #70757a;
-            font-size: 16px;
-        }
+.search-input {
+    flex: 1;
+    width: 0;
+    min-width: 0;
+    padding: 10px 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-size: 16px;
+}
 
-        /* فوتر */
-        footer {
-            margin-top: 60px;
-            background: #f2f2f2;
-            border-top: 1px solid var(--border-color);
-            font-size: 14px;
-            color: #70757a;
-        }
+.search-input::placeholder {
+    color: var(--muted);
+    opacity: .9;
+}
 
-        .footer-inner {
-            padding: 14px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+.clear-button {
+    display: none;
+    flex-shrink: 0;
+}
 
-        .footer-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
+.search-button {
+    flex-shrink: 0;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 24px;
+    background: var(--blue);
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+}
 
-        .footer-left a {
-            color: #70757a;
-            text-decoration: none;
-        }
+.search-button:hover {
+    filter: brightness(.96);
+}
 
-        .footer-left a:hover {
-            text-decoration: underline;
-        }
+.quick-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 17px;
+}
 
-        .footer-lang-selector {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+.quick-button {
+    padding: 9px 13px;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: var(--soft);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13px;
+}
 
-        .footer-lang-selector select {
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 4px 8px;
-            background: #fff;
-            font-size: 13px;
-            cursor: pointer;
-            color: var(--text-color);
-        }
-    </style>
+.quick-button:hover {
+    background: var(--hover);
+}
+
+/* تب‌های جستجو */
+
+.tabs-wrap {
+    position: sticky;
+    top: 59px;
+    z-index: 10;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.tabs {
+    display: flex;
+    gap: 25px;
+    width: min(100% - 32px, 760px);
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    overscroll-behavior-x: contain;
+}
+
+.tab {
+    flex-shrink: 0;
+    padding: 14px 3px 12px;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.tab.active {
+    border-bottom-color: var(--blue);
+    color: var(--blue);
+    font-weight: 700;
+}
+
+/* نتایج */
+
+.main-container {
+    width: min(100% - 32px, 760px);
+    min-height: 250px;
+    margin: 22px auto 50px;
+}
+
+.result-stats {
+    margin-bottom: 22px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.result-item {
+    margin-bottom: 27px;
+    overflow-wrap: anywhere;
+}
+
+.result-site-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    min-width: 0;
+}
+
+.favicon-fallback {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--soft);
+    font-size: 15px;
+}
+
+.site-info-text {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.result-domain {
+    display: block;
+    overflow: hidden;
+    color: var(--text);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.result-url {
+    display: block;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.result-title {
+    display: inline-block;
+    margin-bottom: 5px;
+    color: var(--blue);
+    font-size: 20px;
+    line-height: 1.45;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.result-title:hover {
+    text-decoration: underline;
+}
+
+.result-snippet {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+}
+
+.status-box {
+    padding: 30px 16px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--soft);
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.9;
+}
+
+.status-icon {
+    margin-bottom: 10px;
+    font-size: 30px;
+}
+
+.status-title {
+    margin-bottom: 5px;
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 650;
+}
+
+.status-box button {
+    margin-top: 12px;
+    padding: 9px 16px;
+    border: 0;
+    border-radius: 20px;
+    background: var(--blue);
+    color: white;
+    cursor: pointer;
+}
+
+.spinner {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* پاورقی */
+
+.footer {
+    padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: var(--soft);
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    width: min(100%, 1000px);
+    margin: 0 auto;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.footer a {
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.footer-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.footer select {
+    max-width: 145px;
+    padding: 7px 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+}
+
+/* موبایل */
+
+@media (max-width: 600px) {
+    .topbar {
+        padding: 9px 12px;
+        gap: 8px;
+    }
+
+    .logo {
+        font-size: 19px;
+    }
+
+    .logo-mark {
+        width: 31px;
+        height: 31px;
+        border-radius: 10px;
+    }
+
+    .icon-button {
+        width: 38px;
+        height: 38px;
+    }
+
+    .search-area {
+        width: calc(100% - 28px);
+        margin: 24px auto 18px;
+    }
+
+    .search-heading {
+        margin-bottom: 17px;
+    }
+
+    .search-subtitle {
+        font-size: 13px;
+    }
+
+    .search-form {
+        min-height: 50px;
+        gap: 5px;
+    }
+
+    .search-button {
+        min-width: 40px;
+        height: 40px;
+        padding: 0 11px;
+    }
+
+    .quick-links {
+        gap: 7px;
+    }
+
+    .quick-button {
+        padding: 8px 11px;
+    }
+
+    .tabs-wrap {
+        top: 56px;
+    }
+
+    .tabs {
+        width: calc(100% - 24px);
+        gap: 20px;
+    }
+
+    .main-container {
+        width: calc(100% - 30px);
+        margin-top: 18px;
+    }
+
+    .result-title {
+        font-size: 18px;
+    }
+
+    .result-snippet {
+        font-size: 14px;
+        line-height: 1.85;
+    }
+
+    .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 360px) {
+    .logo {
+        font-size: 17px;
+    }
+
+    .top-actions {
+        gap: 0;
+    }
+
+    .search-heading {
+        font-size: 26px;
+    }
+
+    .search-button {
+        padding: 0 9px;
+        font-size: 13px;
+    }
+
+    .tabs {
+        gap: 16px;
+    }
+
+    .result-title {
+        font-size: 17px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
 </head>
+
 <body>
 
-    <header>
-        <a href="NOKIM.html" class="logo"> NOKIM</a>
-        <form class="search-form" onsubmit="handleNewSearch(event)">
-            <input type="text" id="searchInput" autocomplete="off">
-            <button type="submit" class="search-icon-btn" title="جستجو">🔍</button>
-        </form>
-    </header>
+<header class="topbar">
+    <a class="logo" href="NOKIM.html" aria-label="صفحه اصلی NOKIM">
+        <span class="logo-mark">N</span>
+        <span>NOKIM</span>
+    </a>
 
-    <div class="tabs">
-        <div class="tab active" data-tab="all" id="tabAll" onclick="switchTab('all')">همه</div>
-        <div class="tab" data-tab="wiki" id="tabWiki" onclick="switchTab('wiki')">ویکی‌پدیا</div>
-        <div class="tab" data-tab="images" id="tabImages" onclick="switchTab('images')">تصاویر</div>
-        <div class="tab" data-tab="videos" id="tabVideos" onclick="switchTab('videos')">ویدیو</div>
-        <div class="tab" data-tab="news" id="tabNews" onclick="switchTab('news')">اخبار</div>
+    <div class="top-actions">
+        <button class="icon-button" id="themeButton"
+                type="button" aria-label="تغییر حالت روشن و تاریک"
+                title="حالت تاریک">🌙</button>
     </div>
+</header>
 
-    <div class="main-container">
-        <div id="resultStats" class="result-stats"></div>
-        <div id="loading" class="loading" style="display: none;">
-            <div class="spinner"></div>
-            <span id="loadingText">در حال جستجو...</span>
-        </div>
-        <div id="resultList"></div>
+<section class="search-area">
+    <h1 class="search-heading"><span>Nokim</span> Explorer</h1>
+    <p class="search-subtitle" id="subtitle">جستجو در وب، ساده‌تر از همیشه</p>
+
+    <form class="search-form" id="searchForm">
+        <span class="search-symbol" aria-hidden="true">⌕</span>
+
+        <input
+            class="search-input"
+            id="searchInput"
+            type="search"
+            name="q"
+            placeholder="عبارت موردنظر را جستجو کنید..."
+            autocomplete="off"
+            enterkeyhint="search"
+            aria-label="عبارت جستجو"
+        >
+
+        <button class="icon-button clear-button" id="clearButton"
+                type="button" aria-label="پاک کردن جستجو">×</button>
+
+        <button class="search-button" id="searchButton" type="submit">
+            جستجو
+        </button>
+    </form>
+
+    <div class="quick-links" id="quickLinks">
+        <button class="quick-button" type="button" data-quick="Wikipedia">
+            📚 ویکی‌پدیا
+        </button>
+        <button class="quick-button" type="button" data-quick="technology">
+            💻 فناوری
+        </button>
+        <button class="quick-button" type="button" data-quick="NOKIM">
+            🔎 NOKIM
+        </button>
     </div>
+</section>
 
-    <footer>
-        <div class="footer-inner">
-            <div class="footer-left">
-                <span id="footerIran"> © 2026 NOKIM Corporation. All rights reserved</span>
+<nav class="tabs-wrap" aria-label="دسته‌بندی نتایج">
+    <div class="tabs" role="tablist">
+        <button class="tab active" type="button" role="tab"
+                aria-selected="true" data-tab="all" id="tabAll">همه</button>
+
+        <button class="tab" type="button" role="tab"
+                aria-selected="false" data-tab="wiki" id="tabWiki">ویکی‌پدیا</button>
+
+        <button class="tab" type="button" role="tab"
+                aria-selected="false" data-tab="images" id="tabImages">تصاویر</button>
+
+        <button class="tab" type="button" role="tab"
+                aria-selected="false" data-tab="videos" id="tabVideos">ویدیو</button>
+
+        <button class="tab" type="button" role="tab"
+                aria-selected="false" data-tab="news" id="tabNews">اخبار</button>
+    </div>
+</nav>
+
+<main class="main-container">
+    <div class="result-stats" id="resultStats" aria-live="polite"></div>
+    <div id="resultList" aria-live="polite"></div>
+</main>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <div>
+            <div>© 2026 NOKIM Corporation. All rights reserved</div>
+            <div class="footer-links" style="margin-top:12px">
                 <a href="https://nokim69.github.io/about.html" id="footerAbout">درباره</a>
-                <a href="#" id="footerPrivacy">حریم خصوصی</a>
-                <a href="#" id="footerTerms">شرایط</a>
-            </div>
-            <div class="footer-lang-selector">
-                <span id="langLabel" style="font-size: 13px;">زبان:</span>
-                <select id="langSelector" onchange="changeLanguage()">
-                    <option value="fa">فارسی</option>
-                    <option value="en">English</option>
-                    <option value="ru">Русский</option>
-                    <option value="tr">Türkçe</option>
-                    <option value="zh">中文</option>
-                </select>
+                <a href="privacy.html" id="footerPrivacy">حریم خصوصی</a>
+                <a href="terms.html" id="footerTerms">شرایط استفاده</a>
             </div>
         </div>
-    </footer>
 
-    <script>
-        const i18n = {
-            fa: {
-                title: "Nokim Explorer - نتایج جستجو",
-                all: "همه", wiki: "ویکی‌پدیا", images: "تصاویر", videos: "ویدیو", news: "اخبار",
-                loading: "در حال جستجو...",
-                noResults: "نتیجه‌ای پیدا نشد 😕 لطفاً املای عبارت خود را بررسی کنید.",
-                stats: (count, time) => `حدود ${count} نتیجه (${time} ثانیه)`,
-                about: "درباره", privacy: "حریم خصوصی", terms: "شرایط",
-                langText: "زبان:",
-                dir: "rtl"
-            },
-            en: {
-                title: "Nokim Explorer - Search Results",
-                all: "All", wiki: "Wikipedia", images: "Images", videos: "Videos", news: "News",
-                loading: "Searching...",
-                noResults: "No results found 😕 Please check your spelling.",
-                stats: (count, time) => `About ${count} results (${time}s)`,
-                about: "About", privacy: "Privacy", terms: "Terms",
-                langText: "Language:",
-                dir: "ltr"
-            },
-            ru: {
-                title: "Nokim Explorer - Результаты поиска",
-                all: "Все", wiki: "Википедия", images: "Картинки", videos: "Видео", news: "Новости",
-                loading: "Поиск...",
-                noResults: "Результатов не найдено 😕",
-                stats: (count, time) => `Результатов: примерно ${count} (${time} сек.)`,
-                about: "О нас", privacy: "Конфиденциальность", terms: "Условия",
-                langText: "Язык:",
-                dir: "ltr"
-            },
-            tr: {
-                title: "Nokim Explorer - Arama Sonuçları",
-                all: "Tümü", wiki: "Vikipedi", images: "Görseller", videos: "Videolar", news: "Haberler",
-                loading: "Aranıyor...",
-                noResults: "Sonuç bulunamadı 😕",
-                stats: (count, time) => `Yaklaşık ${count} sonuç bulundu (${time}s)`,
-                about: "Hakkında", privacy: "Gizlilik", terms: "Şartlar",
-                langText: "Dil:",
-                dir: "ltr"
-            },
-            zh: {
-                title: "Nokim Explorer - 搜索结果",
-                all: "全部", wiki: "维基百科", images: "图片", videos: "视频", news: "新闻",
-                loading: "正在搜索...",
-                noResults: "未找到结果 😕",
-                stats: (count, time) => `约有 ${count} 项结果 (${time}秒)`,
-                about: "关于", privacy: "隐私", terms: "条款",
-                langText: "语言:",
-                dir: "ltr"
-            }
-        };
+        <div class="footer-controls">
+            <label for="langSelector" id="langLabel">زبان:</label>
+            <select id="langSelector">
+                <option value="fa">فارسی</option>
+                <option value="en">English</option>
+                <option value="ru">Русский</option>
+                <option value="tr">Türkçe</option>
+                <option value="zh">中文</option>
+            </select>
+        </div>
+    </div>
+</footer>
 
-        let currentLang = 'fa';
-        let currentQuery = '';
-        let currentActiveTab = 'all';
+<script>
+(function () {
+    "use strict";
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            currentQuery = urlParams.get('q') || '';
-            currentLang = urlParams.get('lang') || 'fa';
+    const $ = id => document.getElementById(id);
 
-            document.getElementById('searchInput').value = currentQuery;
-            document.getElementById('langSelector').value = currentLang;
+    const translations = {
+        fa: {
+            title: "Nokim Explorer - جستجو",
+            subtitle: "جستجو در وب، ساده‌تر از همیشه",
+            placeholder: "عبارت موردنظر را جستجو کنید...",
+            search: "جستجو",
+            all: "همه",
+            wiki: "ویکی‌پدیا",
+            images: "تصاویر",
+            videos: "ویدیو",
+            news: "اخبار",
+            about: "درباره",
+            privacy: "حریم خصوصی",
+            terms: "شرایط استفاده",
+            language: "زبان:",
+            loading: "در حال جستجو...",
+            noResults: "نتیجه‌ای پیدا نشد.",
+            error: "ارتباط با سرویس جستجو برقرار نشد.",
+            retry: "تلاش دوباره",
+            empty: "برای شروع، عبارت موردنظر را در کادر بالا بنویسید.",
+            wikiStats: "نتایج ویکی‌پدیا",
+            unavailable: "این بخش هنوز به سرویس جستجوی اختصاصی متصل نشده است.",
+            count: n => n + " نتیجه",
+            themeLight: "حالت روشن",
+            themeDark: "حالت تاریک",
+            tabTitle: "نتایج جستجو",
+            direction: "rtl"
+        },
+        en: {
+            title: "Nokim Explorer - Search",
+            subtitle: "Explore the web, simply",
+            placeholder: "Search the web...",
+            search: "Search",
+            all: "All",
+            wiki: "Wikipedia",
+            images: "Images",
+            videos: "Videos",
+            news: "News",
+            about: "About",
+            privacy: "Privacy",
+            terms: "Terms of Use",
+            language: "Language:",
+            loading: "Searching...",
+            noResults: "No results found.",
+            error: "Could not connect to the search service.",
+            retry: "Try again",
+            empty: "Enter a search query above to get started.",
+            wikiStats: "Wikipedia results",
+            unavailable: "This section is not connected to a dedicated search service yet.",
+            count: n => n + " results",
+            themeLight: "Light mode",
+            themeDark: "Dark mode",
+            tabTitle: "Search results",
+            direction: "ltr"
+        },
+        ru: {
+            title: "Nokim Explorer - Поиск",
+            subtitle: "Простой поиск в интернете",
+            placeholder: "Введите запрос...",
+            search: "Поиск",
+            all: "Все",
+            wiki: "Википедия",
+            images: "Изображения",
+            videos: "Видео",
+            news: "Новости",
+            about: "О нас",
+            privacy: "Конфиденциальность",
+            terms: "Условия",
+            language: "Язык:",
+            loading: "Поиск...",
+            noResults: "Результаты не найдены.",
+            error: "Не удалось подключиться к поиску.",
+            retry: "Повторить",
+            empty: "Введите запрос в поле выше.",
+            wikiStats: "Результаты Википедии",
+            unavailable: "Этот раздел пока не подключён к поисковому сервису.",
+            count: n => "Результатов: " + n,
+            themeLight: "Светлая тема",
+            themeDark: "Тёмная тема",
+            tabTitle: "Результаты поиска",
+            direction: "ltr"
+        },
+        tr: {
+            title: "Nokim Explorer - Arama",
+            subtitle: "İnternette kolayca arayın",
+            placeholder: "Arama yapın...",
+            search: "Ara",
+            all: "Tümü",
+            wiki: "Vikipedi",
+            images: "Görseller",
+            videos: "Videolar",
+            news: "Haberler",
+            about: "Hakkında",
+            privacy: "Gizlilik",
+            terms: "Kullanım şartları",
+            language: "Dil:",
+            loading: "Aranıyor...",
+            noResults: "Sonuç bulunamadı.",
+            error: "Arama hizmetine bağlanılamadı.",
+            retry: "Tekrar dene",
+            empty: "Başlamak için bir arama yazın.",
+            wikiStats: "Vikipedi sonuçları",
+            unavailable: "Bu bölüm henüz bir arama hizmetine bağlı değil.",
+            count: n => n + " sonuç",
+            themeLight: "Açık tema",
+            themeDark: "Koyu tema",
+            tabTitle: "Arama sonuçları",
+            direction: "ltr"
+        },
+        zh: {
+            title: "Nokim Explorer - 搜索",
+            subtitle: "轻松探索互联网",
+            placeholder: "输入搜索内容...",
+            search: "搜索",
+            all: "全部",
+            wiki: "维基百科",
+            images: "图片",
+            videos: "视频",
+            news: "新闻",
+            about: "关于",
+            privacy: "隐私",
+            terms: "使用条款",
+            language: "语言:",
+            loading: "正在搜索...",
+            noResults: "没有找到结果。",
+            error: "无法连接到搜索服务。",
+            retry: "重试",
+            empty: "请输入搜索内容。",
+            wikiStats: "维基百科结果",
+            unavailable: "此部分尚未连接专用搜索服务。",
+            count: n => n + " 条结果",
+            themeLight: "浅色模式",
+            themeDark: "深色模式",
+            tabTitle: "搜索结果",
+            direction: "ltr"
+        }
+    };
 
-            updateUILanguage();
+    let currentLang = "fa";
+    let currentQuery = "";
+    let activeTab = "all";
+    let requestNumber = 0;
 
-            if (currentQuery) {
-                executeSearch(currentQuery);
-            }
-        });
+    const searchInput = $("searchInput");
+    const resultList = $("resultList");
+    const resultStats = $("resultStats");
+    const loadingThemeColor = $("themeColor");
 
-        function updateUILanguage() {
-            const t = i18n[currentLang] || i18n.fa;
-            document.getElementById('htmlRoot').setAttribute('dir', t.dir);
-            document.getElementById('htmlRoot').setAttribute('lang', currentLang);
-            document.getElementById('pageTitle').innerText = `${currentQuery ? currentQuery + ' - ' : ''}${t.title}`;
-            
-            document.getElementById('tabAll').innerText = t.all;
-            document.getElementById('tabWiki').innerText = t.wiki;
-            document.getElementById('tabImages').innerText = t.images;
-            document.getElementById('tabVideos').innerText = t.videos;
-            document.getElementById('tabNews').innerText = t.news;
-            document.getElementById('loadingText').innerText = t.loading;
-            
-            document.getElementById('footerAbout').innerText = t.about;
-            document.getElementById('footerPrivacy').innerText = t.privacy;
-            document.getElementById('footerTerms').innerText = t.terms;
-            document.getElementById('langLabel').innerText = t.langText;
+    function t() {
+        return translations[currentLang] || translations.fa;
+    }
+
+    function getValidLang(value) {
+        return Object.prototype.hasOwnProperty.call(translations, value)
+            ? value : "fa";
+    }
+
+    function setText(id, value) {
+        $(id).textContent = value;
+    }
+
+    function updateLanguage() {
+        const tr = t();
+
+        document.documentElement.lang = currentLang;
+        document.documentElement.dir = tr.direction;
+        document.title = currentQuery
+            ? currentQuery + " - " + tr.title
+            : tr.title;
+
+        setText("subtitle", tr.subtitle);
+        searchInput.placeholder = tr.placeholder;
+        setText("searchButton", tr.search);
+        setText("tabAll", tr.all);
+        setText("tabWiki", tr.wiki);
+        setText("tabImages", tr.images);
+        setText("tabVideos", tr.videos);
+        setText("tabNews", tr.news);
+        setText("footerAbout", tr.about);
+        setText("footerPrivacy", tr.privacy);
+        setText("footerTerms", tr.terms);
+        setText("langLabel", tr.language);
+
+        updateThemeButton();
+    }
+
+    function readTheme() {
+        try {
+            return localStorage.getItem("nokim-theme") || "light";
+        } catch (e) {
+            return "light";
+        }
+    }
+
+    function setTheme(theme) {
+        const dark = theme === "dark";
+
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        loadingThemeColor.content = dark ? "#121212" : "#ffffff";
+
+        try {
+            localStorage.setItem("nokim-theme", dark ? "dark" : "light");
+        } catch (e) {}
+
+        updateThemeButton();
+    }
+
+    function updateThemeButton() {
+        const dark = document.documentElement.dataset.theme === "dark";
+        $("themeButton").textContent = dark ? "☀️" : "🌙";
+        $("themeButton").title = dark ? t().themeLight : t().themeDark;
+        $("themeButton").setAttribute(
+            "aria-label",
+            dark ? t().themeLight : t().themeDark
+        );
+    }
+
+    function updateURL() {
+        const params = new URLSearchParams();
+
+        if (currentQuery) params.set("q", currentQuery);
+        params.set("lang", currentLang);
+
+        if (activeTab !== "all") params.set("tab", activeTab);
+
+        const newURL = location.pathname + "?" + params.toString();
+
+        try {
+            history.replaceState(null, "", newURL);
+        } catch (e) {}
+    }
+
+    function showStatus(icon, title, message, retry) {
+        resultList.replaceChildren();
+
+        const box = document.createElement("div");
+        box.className = "status-box";
+
+        const iconEl = document.createElement("div");
+        iconEl.className = "status-icon";
+        iconEl.textContent = icon;
+        box.appendChild(iconEl);
+
+        const titleEl = document.createElement("div");
+        titleEl.className = "status-title";
+        titleEl.textContent = title;
+        box.appendChild(titleEl);
+
+        const messageEl = document.createElement("div");
+        messageEl.textContent = message;
+        box.appendChild(messageEl);
+
+        if (retry) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = t().retry;
+            button.addEventListener("click", () => runSearch(currentQuery));
+            box.appendChild(button);
         }
 
-        function changeLanguage() {
-            currentLang = document.getElementById('langSelector').value;
-            updateUILanguage();
-            if (currentQuery) {
-                const newUrl = `results.html?q=${encodeURIComponent(currentQuery)}&lang=${currentLang}`;
-                window.history.pushState({path: newUrl}, '', newUrl);
-                executeSearch(currentQuery);
+        resultList.appendChild(box);
+    }
+
+    function makeResult(title, url, snippet) {
+        const item = document.createElement("article");
+        item.className = "result-item";
+
+        const siteInfo = document.createElement("div");
+        siteInfo.className = "result-site-info";
+
+        const icon = document.createElement("div");
+        icon.className = "favicon-fallback";
+        icon.textContent = "🌐";
+        icon.setAttribute("aria-hidden", "true");
+        siteInfo.appendChild(icon);
+
+        const infoText = document.createElement("div");
+        infoText.className = "site-info-text";
+
+        let hostname = url;
+
+        try {
+            hostname = new URL(url).hostname;
+        } catch (e) {}
+
+        const domain = document.createElement("span");
+        domain.className = "result-domain";
+        domain.textContent = hostname;
+        infoText.appendChild(domain);
+
+        const address = document.createElement("a");
+        address.className = "result-url";
+        address.href = url;
+        address.target = "_blank";
+        address.rel = "noopener noreferrer";
+        address.textContent = url;
+        infoText.appendChild(address);
+
+        siteInfo.appendChild(infoText);
+        item.appendChild(siteInfo);
+
+        const heading = document.createElement("a");
+        heading.className = "result-title";
+        heading.href = url;
+        heading.target = "_blank";
+        heading.rel = "noopener noreferrer";
+        heading.textContent = title;
+        item.appendChild(heading);
+
+        const description = document.createElement("div");
+        description.className = "result-snippet";
+        description.textContent = snippet || "";
+        item.appendChild(description);
+
+        return item;
+    }
+
+    function isHttpURL(value) {
+        try {
+            const parsed = new URL(value);
+            return parsed.protocol === "https:" || parsed.protocol === "http:";
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async function fetchWithTimeout(url, timeoutMs) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+            const response = await fetch(url, {
+                signal: controller.signal,
+                headers: { "Accept": "text/html,text/plain,*/*" }
+            });
+
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
             }
+
+            return await response.text();
+        } finally {
+            clearTimeout(timer);
         }
+    }
 
-        function handleNewSearch(e) {
-            e.preventDefault();
-            const q = document.getElementById('searchInput').value.trim();
-            if (q) {
-                currentQuery = q;
-                const newUrl = `results.html?q=${encodeURIComponent(q)}&lang=${currentLang}`;
-                window.history.pushState({path: newUrl}, '', newUrl);
-                executeSearch(q);
-            }
-        }
+    async function searchWeb(query, requestId) {
+        const target = "https://html.duckduckgo.com/html/?q=" +
+            encodeURIComponent(query);
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            currentActiveTab = tabName;
+        const proxies = [
+            url => "https://api.allorigins.win/raw?url=" +
+                encodeURIComponent(url),
+            url => "https://corsproxy.io/?url=" +
+                encodeURIComponent(url)
+        ];
 
-            if (currentQuery) {
-                if (tabName === 'wiki') {
-                    fetchWikipediaResults(currentQuery);
-                } else if (tabName === 'images') {
-                    renderPlaceholderMessage(`🖼️ تصاویر برای "${currentQuery}" (به‌زودی...)`);
-                } else if (tabName === 'videos') {
-                    renderPlaceholderMessage(`🎬 ویدیوها برای "${currentQuery}" (به‌زودی...)`);
-                } else if (tabName === 'news') {
-                    renderPlaceholderMessage(`📰 اخبار برای "${currentQuery}" (به‌زودی...)`);
-                } else {
-                    executeSearch(currentQuery);
-                }
-            }
-        }
+        let lastError = null;
 
-        function renderPlaceholderMessage(msg) {
-            document.getElementById('resultStats').innerText = '';
-            document.getElementById('resultList').innerHTML = `<div class="no-results" style="font-size:18px;">${msg}</div>`;
-        }
+        for (const makeProxy of proxies) {
+            if (requestId !== requestNumber) return;
 
-        // استخراج دامنه و ساخت آیکون گوگل (Favicon)
-        function getFaviconAndDomain(link) {
             try {
-                const urlObj = new URL(link);
-                const domain = urlObj.hostname;
-                const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
-                return { domain, faviconUrl };
-            } catch (e) {
-                return { domain: link, faviconUrl: '' };
-            }
-        }
+                const text = await fetchWithTimeout(makeProxy(target), 10000);
 
-        async function executeSearch(query) {
-            const startTime = performance.now();
-            const loadingEl = document.getElementById('loading');
-            const resultListEl = document.getElementById('resultList');
-            const statsEl = document.getElementById('resultStats');
+                if (requestId !== requestNumber) return;
 
-            loadingEl.style.display = 'block';
-            resultListEl.innerHTML = '';
-            statsEl.innerText = '';
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, "text/html");
+                const nodes = doc.querySelectorAll(".result");
 
-            if (currentActiveTab === 'wiki') {
-                fetchWikipediaResults(query);
-                return;
-            }
+                const results = [];
 
-            let resultsHtml = '';
+                nodes.forEach(node => {
+                    const titleElement = node.querySelector(".result__title a");
+                    const snippetElement = node.querySelector(".result__snippet");
 
-            try {
-                const targetUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
-                const htmlText = await fetchWithProxies(targetUrl);
+                    if (!titleElement) return;
 
-                if (htmlText) {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(htmlText, 'text/html');
-                    const items = doc.querySelectorAll('.result');
+                    let url = titleElement.getAttribute("href") || "";
 
-                    if (items.length > 0) {
-                        let count = 0;
-                        items.forEach(item => {
-                            const titleEl = item.querySelector('.result__title');
-                            const snippetEl = item.querySelector('.result__snippet');
-                            const urlEl = item.querySelector('.result__url');
+                    try {
+                        const parsed = new URL(url, "https://duckduckgo.com");
 
-                            if (titleEl && snippetEl) {
-                                const title = titleEl.textContent.trim();
-                                const link = titleEl.querySelector('a')?.href || '#';
-                                const snippet = snippetEl.textContent.trim();
-                                
-                                const { domain, faviconUrl } = getFaviconAndDomain(link);
-
-                                resultsHtml += `
-                                    <div class="result-item">
-                                        <div class="result-site-info">
-                                            <img src="${faviconUrl}" class="result-favicon" onerror="this.style.display='none'">
-                                            <div class="result-url-block">
-                                                <span class="result-domain">${domain}</span>
-                                                <a href="${link}" class="result-url" target="_blank">${link}</a>
-                                            </div>
-                                        </div>
-                                        <a href="${link}" class="result-title" target="_blank">${title}</a>
-                                        <div class="result-snippet">${snippet}</div>
-                                    </div>
-                                `;
-                                count++;
-                            }
-                        });
-
-                        if (resultsHtml) {
-                            const endTime = performance.now();
-                            const duration = ((endTime - startTime) / 1000).toFixed(2);
-                            const t = i18n[currentLang] || i18n.fa;
-                            statsEl.innerText = t.stats(count * 12, duration);
-                            resultListEl.innerHTML = resultsHtml;
-                            loadingEl.style.display = 'none';
-                            return;
+                        if (parsed.hostname.includes("duckduckgo.com") &&
+                            parsed.pathname.includes("/l/")) {
+                            const redirect = parsed.searchParams.get("uddg");
+                            if (redirect) url = redirect;
                         }
-                    }
-                }
-            } catch (err) {
-                console.warn('Proxy search fallback triggered:', err);
-            }
+                    } catch (e) {}
 
-            loadingEl.style.display = 'none';
-            const t = i18n[currentLang] || i18n.fa;
-            resultListEl.innerHTML = `<div class="no-results">${t.noResults}</div>`;
-        }
+                    if (!isHttpURL(url)) return;
 
-        async function fetchWithProxies(targetUrl) {
-            const proxies = [
-                (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-                (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-                (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
-            ];
+                    const title = titleElement.textContent.trim();
+                    const snippet = snippetElement
+                        ? snippetElement.textContent.trim() : "";
 
-            for (const getProxyUrl of proxies) {
-                try {
-                    const response = await fetch(getProxyUrl(targetUrl));
-                    if (response.ok) {
-                        const text = await response.text();
-                        if (text && text.length > 100) return text;
-                    }
-                } catch (e) {
-                    continue;
-                }
-            }
-            return null;
-        }
+                    if (!title) return;
 
-        async function fetchWikipediaResults(query) {
-            const loadingEl = document.getElementById('loading');
-            const resultListEl = document.getElementById('resultList');
-            const statsEl = document.getElementById('resultStats');
+                    results.push({ title, url, snippet });
+                });
 
-            loadingEl.style.display = 'block';
-            resultListEl.innerHTML = '';
-            statsEl.innerText = '';
+                if (results.length) {
+                    if (requestId !== requestNumber) return;
 
-            const wikiLang = ['fa', 'en', 'ru', 'tr', 'zh'].includes(currentLang) ? currentLang : 'en';
-            const wikiApiUrl = `https://${wikiLang}.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=10&namespace=0&format=json&origin=*`;
+                    resultList.replaceChildren();
 
-            try {
-                const response = await fetch(wikiApiUrl);
-                const data = await response.json();
-                loadingEl.style.display = 'none';
+                    results.forEach(result => {
+                        resultList.appendChild(
+                            makeResult(result.title, result.url, result.snippet)
+                        );
+                    });
 
-                const titles = data[1] || [];
-                const descriptions = data[2] || [];
-                const urls = data[3] || [];
-
-                if (titles.length === 0) {
-                    const t = i18n[currentLang] || i18n.fa;
-                    resultListEl.innerHTML = `<div class="no-results">${t.noResults}</div>`;
+                    resultStats.textContent = t().count(results.length);
                     return;
                 }
 
-                statsEl.innerText = `Wikipedia (${titles.length} results)`;
-                let html = '';
-                for (let i = 0; i < titles.length; i++) {
-                    const { domain, faviconUrl } = getFaviconAndDomain(urls[i]);
-                    html += `
-                        <div class="result-item">
-                            <div class="result-site-info">
-                                <img src="${faviconUrl}" class="result-favicon" onerror="this.style.display='none'">
-                                <div class="result-url-block">
-                                    <span class="result-domain">${domain}</span>
-                                    <a href="${urls[i]}" class="result-url" target="_blank">${urls[i]}</a>
-                                </div>
-                            </div>
-                            <a href="${urls[i]}" class="result-title" target="_blank">${titles[i]}</a>
-                            <div class="result-snippet">${descriptions[i] || ''}</div>
-                        </div>
-                    `;
-                }
-                resultListEl.innerHTML = html;
-            } catch (err) {
-                loadingEl.style.display = 'none';
-                resultListEl.innerHTML = `<div class="no-results">خطا در بارگذاری اطلاعات ویکی‌پدیا</div>`;
+                lastError = new Error("No results");
+            } catch (e) {
+                lastError = e;
             }
         }
-    </script>
+
+        if (requestId !== requestNumber) return;
+
+        if (lastError) {
+            showStatus("⚠️", t().error,
+                "اتصال اینترنت، محدودیت سرویس یا پراکسی را بررسی کنید.",
+                true);
+        } else {
+            showStatus("🔎", t().noResults, "", false);
+        }
+    }
+
+    async function searchWikipedia(query, requestId) {
+        const apiURL = "https://" + currentLang +
+            ".wikipedia.org/w/api.php?action=query&generator=search" +
+            "&gsrsearch=" + encodeURIComponent(query) +
+            "&gsrlimit=10&gsrnamespace=0&prop=extracts" +
+            "&exintro=1&explaintext=1&exchars=400&format=json&origin=*";
+
+        try {
+            const response = await fetchWithTimeout(apiURL, 12000);
+
+            if (requestId !== requestNumber) return;
+
+            const data = JSON.parse(response);
+            const pages = data.query && data.query.pages
+                ? Object.values(data.query.pages) : [];
+
+            resultList.replaceChildren();
+
+            if (!pages.length) {
+                showStatus("📚", t().noResults, "", false);
+                resultStats.textContent = "";
+                return;
+            }
+
+            pages.sort((a, b) => a.index - b.index);
+
+            pages.forEach(page => {
+                const url = "https://" + currentLang +
+                    ".wikipedia.org/?curid=" + encodeURIComponent(page.pageid);
+
+                resultList.appendChild(makeResult(
+                    page.title,
+                    url,
+                    page.extract || ""
+                ));
+            });
+
+            resultStats.textContent = t().wikiStats + " · " +
+                t().count(pages.length);
+
+        } catch (e) {
+            if (requestId !== requestNumber) return;
+
+            showStatus("⚠️", t().error,
+                "اتصال به ویکی‌پدیا امکان‌پذیر نبود.", true);
+        }
+    }
+
+    async function runSearch(query) {
+        query = (query || "").trim();
+
+        if (!query) {
+            currentQuery = "";
+            resultStats.textContent = "";
+            showStatus("🔎", "Nokim Explorer", t().empty, false);
+            updateURL();
+            return;
+        }
+
+        currentQuery = query;
+        searchInput.value = query;
+
+        const thisRequest = ++requestNumber;
+
+        updateURL();
+        updateLanguage();
+
+        resultStats.textContent = "";
+        resultList.replaceChildren();
+
+        const loadingBox = document.createElement("div");
+        loadingBox.className = "status-box";
+
+        const spinner = document.createElement("div");
+        spinner.className = "spinner";
+        spinner.setAttribute("aria-hidden", "true");
+        loadingBox.appendChild(spinner);
+
+        const loadingText = document.createElement("div");
+        loadingText.style.marginTop = "14px";
+        loadingText.textContent = t().loading;
+        loadingBox.appendChild(loadingText);
+
+        resultList.appendChild(loadingBox);
+
+        if (activeTab === "wiki") {
+            await searchWikipedia(query, thisRequest);
+            return;
+        }
+
+        if (activeTab === "images" ||
+            activeTab === "videos" ||
+            activeTab === "news") {
+            const label = activeTab === "images" ? t().images :
+                activeTab === "videos" ? t().videos : t().news;
+
+            showStatus("🚧", label, t().unavailable, false);
+            return;
+        }
+
+        await searchWeb(query, thisRequest);
+    }
+
+    function selectTab(tab) {
+        activeTab = tab;
+
+        document.querySelectorAll(".tab").forEach(button => {
+            const selected = button.dataset.tab === tab;
+
+            button.classList.toggle("active", selected);
+            button.setAttribute("aria-selected", String(selected));
+        });
+
+        updateURL();
+
+        if (currentQuery) {
+            runSearch(currentQuery);
+        } else if (tab === "wiki") {
+            showStatus("📚", t().wiki, t().empty, false);
+        } else {
+            showStatus("🔎", "Nokim Explorer", t().empty, false);
+        }
+    }
+
+    $("searchForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        runSearch(searchInput.value);
+    });
+
+    $("clearButton").addEventListener("click", function () {
+        searchInput.value = "";
+        searchInput.focus();
+        $("clearButton").style.display = "none";
+    });
+
+    searchInput.addEventListener("input", function () {
+        $("clearButton").style.display =
+            searchInput.value ? "inline-flex" : "none";
+    });
+
+    $("themeButton").addEventListener("click", function () {
+        const isDark =
+            document.documentElement.dataset.theme === "dark";
+
+        setTheme(isDark ? "light" : "dark");
+    });
+
+    $("langSelector").addEventListener("change", function () {
+        currentLang = getValidLang(this.value);
+        updateLanguage();
+        updateURL();
+
+        if (currentQuery) {
+            runSearch(currentQuery);
+        }
+    });
+
+    document.querySelectorAll(".tab").forEach(button => {
+        button.addEventListener("click", function () {
+            selectTab(this.dataset.tab);
+        });
+    });
+
+    document.querySelectorAll("[data-quick]").forEach(button => {
+        button.addEventListener("click", function () {
+            const value = this.dataset.quick;
+            const query = value === "Wikipedia"
+                ? "Wikipedia" : value;
+
+            searchInput.value = query;
+            runSearch(query);
+        });
+    });
+
+    function init() {
+        setTheme(readTheme());
+
+        const params = new URLSearchParams(location.search);
+
+        currentQuery = params.get("q") || "";
+        currentLang = getValidLang(params.get("lang") || "fa");
+
+        const requestedTab = params.get("tab");
+        const validTabs = ["all", "wiki", "images", "videos", "news"];
+
+        activeTab = validTabs.includes(requestedTab)
+            ? requestedTab : "all";
+
+        searchInput.value = currentQuery;
+        $("langSelector").value = currentLang;
+
+        $("clearButton").style.display =
+            currentQuery ? "inline-flex" : "none";
+
+        updateLanguage();
+
+        document.querySelectorAll(".tab").forEach(button => {
+            const selected = button.dataset.tab === activeTab;
+
+            button.classList.toggle("active", selected);
+            button.setAttribute("aria-selected", String(selected));
+        });
+
+        if (currentQuery) {
+            runSearch(currentQuery);
+        } else {
+            showStatus("🔎", "Nokim Explorer", t().empty, false);
+        }
+    }
+
+    init();
+})();
+</script>
+
 </body>
 </html>
-
-   
-
- 
