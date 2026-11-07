@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>NOKIM AI - نسخه کلاسیک</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            margin: 0;
+            padding: 10px;
+            direction: rtl;
+            text-align: right;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 22px;
+            color: #444;
+            margin-top: 40px;
+            margin-bottom: 30px;
+        }
+        .chat-box {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .user-msg {
+            background-color: #f1f1f1;
+            text-align: right;
+        }
+        .ai-msg {
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            text-align: right;
+        }
+        .input-form {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+        }
+        textarea {
+            width: 78%;
+            border: none;
+            resize: none;
+            padding: 8px;
+            font-family: Tahoma, Arial, sans-serif;
+            font-size: 14px;
+            outline: none;
+            vertical-align: middle;
+        }
+        button {
+            width: 18%;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: Tahoma, Arial, sans-serif;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+        .footer {
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            margin-top: 60px;
+            margin-bottom: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>برنامه امروز چیه؟</h1>
+    
+    <div id="chat-history" class="chat-box"></div>
+
+    <div class="footer">
+        NOKIM AI - توسعه داده شده توسط صبور
+    </div>
+</div>
+
+<div class="input-form">
+    <form id="ai-form" onsubmit="sendMessage(event)">
+        <textarea id="user-input" rows="1" placeholder="از NOKIM AI بپرسید..."></textarea>
+        <button type="submit" id="send-btn">ارسال</button>
+    </form>
+</div>
+
+<script>
+    const API_URL = "https://api.gapgpt.app/v1/responses";
+    const API_KEY = "GAPGPTMASKTOKENe1ffxpc80hdX0X";
+    const MODEL_NAME = "gapgpt-deepseek-v4.1-flash";
+
+    async function sendMessage(event) {
+        event.preventDefault();
+        const inputField = document.getElementById('user-input');
+        const text = inputField.value.trim();
+        if (!text) return;
+
+        const chatHistory = document.getElementById('chat-history');
+
+        // نمایش پیام کاربر
+        chatHistory.innerHTML += '<div class="message user-msg"><b>شما:</b> ' + escapeHtml(text) + '</div>';
+        inputField.value = '';
+
+        // نمایش پیام در حال پردازش
+        const loadingId = 'loading-' + Date.now();
+        chatHistory.innerHTML += '<div id="' + loadingId + '" class="message ai-msg"><b>NOKIM:</b> در حال تفکر...</div>';
+        window.scrollTo(0, document.body.scrollHeight);
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + API_KEY
+                },
+                body: JSON.stringify({
+                    model: MODEL_NAME,
+                    input: text,
+                    reasoning: { effort: "none" }
+                })
+            });
+
+            if (!response.ok) throw new Error('خطا در پاسخ');
+
+            const data = await response.json();
+            const replyText = data.output_text || data.choices?.[0]?.message?.content || "پاسخی دریافت نشد.";
+            
+            document.getElementById(loadingId).innerHTML = '<b>NOKIM:</b> ' + escapeHtml(replyText);
+        } catch (error) {
+            document.getElementById(loadingId).innerHTML = '<b>NOKIM:</b> خطا در ارتباط با سرور.';
+        }
+
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function escapeHtml(text) {
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+</script>
+
+</body>
+</html>
