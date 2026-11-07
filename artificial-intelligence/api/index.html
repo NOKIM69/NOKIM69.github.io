@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هوش مصنوعی صبور</title>
+    <!-- لود کردن Tailwind CSS برای استایل‌دهی شیک و مینیمال -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- فونت وزیرمتن برای زیبایی متن‌های فارسی -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; }
+    </style>
+</head>
+<body class="bg-white text-gray-800 h-screen flex flex-col justify-between items-center p-4">
+
+    <!-- بخش وسط صفحه (عنوان اولیه و تاریخچه چت) -->
+    <div id="main-container" class="flex flex-col items-center justify-center flex-grow w-full max-w-2xl text-center overflow-y-auto px-2">
+        <h1 id="welcome-title" class="text-3xl md:text-4xl font-medium text-gray-700 mb-6">برنامه امروز چیه؟</h1>
+        <div id="chat-box" class="w-full space-y-4 text-right hidden mb-auto"></div>
+    </div>
+
+    <!-- کادر چت پایین صفحه (دقیقا شبیه ChatGPT) -->
+    <div class="w-full max-w-2xl mb-4">
+        <div class="relative flex items-center bg-gray-50 border border-gray-200 rounded-3xl shadow-sm px-4 py-3 focus-within:ring-2 focus-within:ring-gray-300">
+            <textarea id="user-input" rows="1" placeholder="از ChatGPT بپرس..." class="w-full bg-transparent focus:outline-none resize-none text-right text-gray-700 placeholder-gray-400"></textarea>
+            <button id="send-btn" class="bg-black text-white p-2 rounded-full hover:bg-gray-800 transition flex items-center justify-center ml-2 disabled:opacity-40 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+            </button>
+        </div>
+        <p class="text-center text-xs text-gray-400 mt-2">طراحی شده توسط صبور</p>
+    </div>
+
+    <script>
+        const input = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const welcomeTitle = document.getElementById('welcome-title');
+        const chatBox = document.getElementById('chat-box');
+        const mainContainer = document.getElementById('main-container');
+
+        // تنظیمات API شما
+        const API_URL = "https://api.gapgpt.app/v1/responses"; // یا اندپوینت سازگار
+        const API_KEY = "GAPGPTMASKTOKEN3ko2i19gautX0X";
+        const MODEL_NAME = "gapgpt-deepseek-v4.1-flash";
+
+        async function handleSendMessage() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            // مخفی کردن عنوان بزرگ و نمایش باکس چت‌ها
+            welcomeTitle.style.display = 'none';
+            chatBox.classList.remove('hidden');
+
+            // اضافه کردن پیام کاربر به صفحه
+            chatBox.innerHTML += `
+                <div class="flex justify-end">
+                    <div class="bg-gray-100 p-3 rounded-2xl max-w-[80%] text-gray-800 text-right">${escapeHtml(text)}</div>
+                </div>`;
+            
+            input.value = '';
+            input.style.height = 'auto';
+            mainContainer.scrollTop = mainContainer.scrollHeight;
+
+            // ساخت باکس پاسخ هوش مصنوعی با حالت "در حال تفکر..."
+            const aiMsgId = 'ai-msg-' + Date.now();
+            chatBox.innerHTML += `
+                <div class="flex justify-start">
+                    <div id="${aiMsgId}" class="p-3 rounded-2xl max-w-[80%] text-gray-700 bg-white border border-gray-100 text-right">در حال تفکر...</div>
+                </div>`;
+            mainContainer.scrollTop = mainContainer.scrollHeight;
+
+            try {
+                // ارسال درخواست مستقیم به API
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: MODEL_NAME,
+                        input: text,
+                        reasoning: { effort: "none" }
+                    })
+                });
+
+                if (!response.ok) throw new Error('خطا در پاسخ سرور');
+
+                const data = await response.json();
+                // فرض بر این است که خروجی ساختار مشابه دارد، فیلد متن را استخراج می‌کنیم
+                const replyText = data.output_text || data.choices?.[0]?.message?.content || "پاسخی دریافت نشد.";
+                
+                document.getElementById(aiMsgId).innerText = replyText;
+            } catch (error) {
+                document.getElementById(aiMsgId).innerText = "متأسفانه خطایی در ارتباط با سرور رخ داد.";
+            }
+
+            mainContainer.scrollTop = mainContainer.scrollHeight;
+        }
+
+        // تابع کمکی برای امنیت متن‌ها
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // رویدادهای کلیک و اینتر
+        sendBtn.addEventListener('click', handleSendMessage);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
